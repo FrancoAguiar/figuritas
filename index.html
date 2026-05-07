@@ -187,7 +187,7 @@
 
         .section-group { margin-bottom: 15px; background: rgba(255,255,255,0.03); border: 1px solid var(--glass-border); border-radius: 16px; overflow: hidden; }
         .section-header { padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; background: rgba(0,0,0,0.2); }
-        .section-title { font-weight: 600; font-size: 1.1rem; display: flex; align-items: center; gap: 10px; }
+        .section-title { font-weight: 600; font-size: 1.1rem; display: flex; align-items: center; gap: 10px; min-width: 0; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
         .section-stats { font-size: 0.85rem; color: var(--gray); display: flex; align-items: center; gap: 10px; }
         .section-progress { width: 60px; height: 4px; background: rgba(255,255,255,0.2); border-radius: 2px; overflow: hidden; }
         .section-progress-fill { height: 100%; background: var(--lime); width: 0%; transition: width 0.3s; }
@@ -300,7 +300,7 @@
 </head>
 <body>
 
-<!-- DATA REAL DEL ÁLBUM: albumData.js debe estar en la misma carpeta que index.html -->
+<!-- BASE DE DATOS REAL EXTERNA -->
 <script src="albumData.js"></script>
 
 <div class="app-container" id="app-container">
@@ -364,8 +364,8 @@
             <!-- VIEW: RÁPIDO -->
             <div id="view-quick" class="view-section">
                 <h3 style="margin-bottom: 10px;">Ingreso Rápido</h3>
-                <p style="color:var(--gray); font-size:0.9rem; margin-bottom:15px;">Ideal si tenés una pila de figuritas. Separalas por comas. Ej: ARG-1, MEX-15, FWC-1</p>
-                <textarea id="quick-input" class="textarea-input" placeholder="ARG-1, MEX-2, FWC-1..."></textarea>
+                <p style="color:var(--gray); font-size:0.9rem; margin-bottom:15px;">Ideal si tenés una pila de figuritas. Separalas por comas. Ej: ARG01, MEX15, FWC-1</p>
+                <textarea id="quick-input" class="textarea-input" placeholder="ARG01, MEX02..."></textarea>
                 <div class="action-grid">
                     <button class="btn-primary" onclick="app.processQuickAdd('tengo')" style="margin-bottom:0;">Marcar "La tengo"</button>
                     <button class="btn-secondary" onclick="app.processQuickAdd('repetida')" style="margin-bottom:0; border-color:var(--orange); color:var(--orange);">+ Repetidas</button>
@@ -410,8 +410,8 @@
                 <button class="btn-secondary btn-danger" onclick="app.resetProgress()" style="margin-top: 20px;">⚠️ Resetear Progreso</button>
 
                 <div class="footer-legal">
-                    Sticker Cup 2026 v7.0 (CSV real)<br>
-                    Tracker con data real desde albumData.js. Tu progreso se guarda localmente en tu navegador.
+                    Sticker Cup 2026 v7.2<br>
+                    Base real cargada desde albumData.js. Tu progreso se guarda localmente en tu navegador.
                 </div>
             </div>
         </div>
@@ -505,30 +505,31 @@ const app = {
     startApp() {
         this.renderAlbum();
         this.updateDashboard();
+        this.showToast(`Base cargada: ${this.state.albumData.length} figuritas`);
     },
 
     // =========================================
-    // INICIALIZACIÓN DE DATOS (AHORA INLINE)
+    // INICIALIZACIÓN DE DATOS
     // =========================================
     initData() {
         if (typeof window.albumData !== 'undefined' && Array.isArray(window.albumData) && window.albumData.length > 0) {
-            this.state.albumData = window.albumData[0].stickers
+            this.state.albumData = window.albumData[0] && window.albumData[0].stickers
                 ? window.albumData.flatMap(g => g.stickers)
                 : window.albumData;
-
-            console.log(`✅ ${this.state.albumData.length} figuritas reales cargadas desde albumData.js`);
-            return;
+            console.log(`✅ ${this.state.albumData.length} figuritas cargadas desde albumData.js`, window.albumMeta || '');
+        } else {
+            alert("No se encontró albumData.js o está vacío. Subí albumData.js en la misma carpeta que index.html.");
+            this.state.albumData = [];
         }
-
-        alert("No se encontró albumData.js o está vacío. Subí albumData.js en la misma carpeta que index.html.");
-        this.state.albumData = [];
     },
 
     loadUserProgress() {
         const rawUser = localStorage.getItem(this.keys.user);
         if (rawUser) {
-            this.state.user = JSON.parse(rawUser);
+            try { this.state.user = JSON.parse(rawUser) || {}; } catch(e) { this.state.user = {}; }
         }
+        const validIds = new Set(this.state.albumData.map(s => s.id));
+        Object.keys(this.state.user).forEach(id => { if (!validIds.has(id)) delete this.state.user[id]; });
     },
 
     saveUser() {
@@ -589,6 +590,8 @@ const app = {
     renderAlbum() {
         if (this.state.albumData.length === 0) return;
 
+        const scroller = document.getElementById('views-container');
+        const previousScroll = scroller ? scroller.scrollTop : 0;
         const container = document.getElementById('album-container');
         container.innerHTML = '';
         let hasResults = false;
@@ -684,6 +687,7 @@ const app = {
             `;
             container.appendChild(gDiv);
         }
+        if (scroller) requestAnimationFrame(() => { scroller.scrollTop = previousScroll; });
     },
 
     updateDashboard() {
@@ -834,36 +838,9 @@ const app = {
     // LISTAS Y MODO RÁPIDO
     // =========================================
     normalizeInputCode(input) {
-        const upper = String(input).toUpperCase().replace(/\s+/g, '');
-        if (!upper) return upper;
-
-        // Si existe exactamente como código real del CSV, usarlo tal cual.
-        if (this.state.albumData.some(s => String(s.code).toUpperCase() === upper || String(s.id).toUpperCase() === upper)) {
-            return upper;
-        }
-
-        // Aceptar MEX15 / ARG01 y convertir a MEX-15 / ARG-1 si existe en la base.
-        let noHyphen = upper.match(/^([A-Z]+)(\d+)$/);
-        if (noHyphen) {
-            const prefix = noHyphen[1];
-            const num = parseInt(noHyphen[2], 10);
-            const candidate = `${prefix}-${num}`;
-            if (this.state.albumData.some(s => String(s.code).toUpperCase() === candidate)) {
-                return candidate;
-            }
-        }
-
-        // Aceptar MEX-01 y convertir a MEX-1 si existe.
-        let withHyphen = upper.match(/^([A-Z]+)-(\d+)$/);
-        if (withHyphen) {
-            const prefix = withHyphen[1];
-            const num = parseInt(withHyphen[2], 10);
-            const candidate = `${prefix}-${num}`;
-            if (this.state.albumData.some(s => String(s.code).toUpperCase() === candidate)) {
-                return candidate;
-            }
-        }
-
+        let upper = input.toUpperCase().replace(/\s+/g, '');
+        let match = upper.match(/^([A-Z]+)-?(\d+)$/);
+        if (match) return `${match[1]}-${parseInt(match[2], 10)}`;
         return upper;
     },
 
@@ -875,7 +852,7 @@ const app = {
         let count = 0; let notFound = [];
 
         rawTokens.forEach(token => {
-            let match = this.state.albumData.find(s => s.id === token || s.code.toUpperCase() === token);
+            let match = this.state.albumData.find(s => s.id.toUpperCase() === token || s.code.toUpperCase() === token);
             if (!match && !isNaN(token)) {
                 const numMatches = this.state.albumData.filter(s => s.number == parseInt(token));
                 if (numMatches.length === 1) match = numMatches[0];
