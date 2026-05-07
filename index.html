@@ -6,6 +6,7 @@
     <title>FiguritApp</title>
     <link id="manifest-link" rel="manifest" href="">
     <meta name="theme-color" content="#07111F">
+    <link rel="icon" type="image/png" href="logo.png">
     
     <style>
         /* =========================================
@@ -28,8 +29,8 @@
             --glass-border: rgba(255, 255, 255, 0.12);
             --glass-blur: blur(18px);
 
-            --font-heading: 'Bebas Neue', 'Anton', 'Archivo Black', 'Impact', sans-serif;
-            --font-body: 'Inter', 'Manrope', system-ui, -apple-system, sans-serif;
+            --font-heading: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            --font-body: 'Helvetica Neue', Helvetica, Arial, sans-serif;
             
             --safe-bottom: env(safe-area-inset-bottom, 20px);
         }
@@ -112,9 +113,9 @@
 
         @keyframes float { 0% { transform: translateY(0); } 50% { transform: translateY(-10px); } 100% { transform: translateY(0); } }
 
-        .btn-primary { background: var(--lime); color: var(--navy); padding: 16px 24px; border-radius: 16px; font-weight: bold; font-size: 1.1rem; width: 100%; margin-bottom: 15px; transition: transform 0.1s, filter 0.2s; }
+        .btn-primary { background: var(--lime); color: var(--navy); padding: 16px 24px; border-radius: 12px; font-weight: 700; font-size: 1.1rem; width: 100%; margin-bottom: 15px; transition: transform 0.1s, filter 0.2s; }
         .btn-primary:active { transform: scale(0.96); filter: brightness(0.9); }
-        .btn-secondary { background: var(--glass-bg); border: 1px solid var(--glass-border); color: var(--white); padding: 14px 24px; border-radius: 16px; font-weight: 500; width: 100%; margin-bottom: 15px; backdrop-filter: var(--glass-blur); transition: background 0.2s; }
+        .btn-secondary { background: var(--glass-bg); border: 1px solid var(--glass-border); color: var(--white); padding: 14px 24px; border-radius: 12px; font-weight: 500; width: 100%; margin-bottom: 15px; backdrop-filter: var(--glass-blur); transition: background 0.2s; }
         .btn-secondary:active { background: rgba(255,255,255,0.15); }
 
         /* =========================================
@@ -182,19 +183,21 @@
         .filter-pill { padding: 8px 16px; background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 20px; color: var(--gray); font-size: 0.9rem; white-space: nowrap; transition: all 0.2s; }
         .filter-pill.active { background: var(--white); color: var(--navy); font-weight: bold; }
 
-        .search-bar { width: 100%; padding: 14px 20px; background: rgba(0,0,0,0.3); border: 1px solid var(--glass-border); border-radius: 16px; color: white; margin-bottom: 20px; font-size: 1rem; transition: border-color 0.3s; }
+        .search-bar { width: 100%; padding: 14px 20px; background: rgba(0,0,0,0.3); border: 1px solid var(--glass-border); border-radius: 12px; color: white; margin-bottom: 20px; font-size: 1rem; transition: border-color 0.3s; }
         .search-bar:focus { border-color: var(--lime); }
 
-        .section-group { margin-bottom: 15px; background: rgba(255,255,255,0.03); border: 1px solid var(--glass-border); border-radius: 16px; overflow: hidden; }
+        .section-group { margin-bottom: 15px; background: rgba(255,255,255,0.03); border: 1px solid var(--glass-border); border-radius: 6px; overflow: hidden; }
         .section-header { padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; background: rgba(0,0,0,0.2); }
         .section-title { font-weight: 600; font-size: 1.1rem; display: flex; align-items: center; gap: 10px; min-width: 0; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
         .section-stats { font-size: 0.85rem; color: var(--gray); display: flex; align-items: center; gap: 10px; }
         .section-progress { width: 60px; height: 4px; background: rgba(255,255,255,0.2); border-radius: 2px; overflow: hidden; }
         .section-progress-fill { height: 100%; background: var(--lime); width: 0%; transition: width 0.3s; }
         
-        .section-content { display: none; padding: 15px; grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)); gap: 12px; }
-        .section-group.open .section-content { display: grid; }
+        .section-content { display: grid; grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)); gap: 12px; max-height: 0; opacity: 0; overflow: hidden; padding: 0 15px; transform: translateY(-6px); transition: max-height .32s ease, opacity .22s ease, padding .26s ease, transform .26s ease; }
+        .section-group.open .section-content { max-height: 1600px; opacity: 1; padding: 15px; transform: translateY(0); }
         .section-group.open .section-header { border-bottom: 1px solid var(--glass-border); }
+        .section-header::after { content: '▾'; font-size: .95rem; color: rgba(255,255,255,.65); margin-left: 12px; transition: transform .26s ease, color .2s ease; }
+        .section-group.open .section-header::after { transform: rotate(180deg); color: var(--lime); }
 
         /* Sticker Card */
         .sticker-card {
@@ -496,10 +499,10 @@
 
         .app-header {
             background:
-                linear-gradient(90deg, rgba(230,29,37,.18), rgba(49,85,255,.24), rgba(0,200,83,.15)),
-                rgba(7,17,31,.82);
-            border-bottom: 1px solid rgba(255,255,255,.22);
-            box-shadow: 0 18px 35px rgba(0,0,0,.22);
+                linear-gradient(90deg, rgba(230,29,37,.12), rgba(49,85,255,.16), rgba(0,200,83,.10)),
+                rgba(4,9,18,.96);
+            border-bottom: 1px solid rgba(255,255,255,.12);
+            box-shadow: 0 18px 35px rgba(0,0,0,.34);
         }
         .header-title {
             font-size: 1.75rem;
@@ -508,6 +511,31 @@
         .header-title span {
             color: var(--brand-lime);
             text-shadow: 0 0 20px rgba(182,255,0,.38);
+        }
+        .brand-wrap {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            min-width: 0;
+        }
+        .brand-logo {
+            width: 40px;
+            height: 40px;
+            object-fit: contain;
+            flex: 0 0 auto;
+            filter: drop-shadow(0 4px 10px rgba(0,0,0,.35));
+        }
+        .header-title {
+            display: flex;
+            align-items: center;
+            gap: 0;
+            line-height: 1;
+            text-transform: none !important;
+        }
+        @media (max-width: 420px) {
+            .brand-logo { width: 34px; height: 34px; }
+            .header-title { font-size: 1.5rem; }
+            #header-stats { font-size: .82rem !important; padding: 4px 9px !important; }
         }
         #header-stats {
             color: #07111F !important;
@@ -530,9 +558,13 @@
         .progress-bar-bg, .section-progress {
             background: rgba(255,255,255,.10);
         }
-        .progress-bar-fill, .section-progress-fill {
-            background: linear-gradient(90deg, #E61D25, #FF4B00, #B6FF00, #00C853, #3155FF);
-            box-shadow: 0 0 18px rgba(182,255,0,.32);
+        .progress-bar-fill {
+            background: linear-gradient(90deg, #3155FF, #74A9FF, #B6FF00);
+            box-shadow: 0 0 18px rgba(116,169,255,.22);
+        }
+        .section-progress-fill {
+            background: linear-gradient(90deg, #3155FF, #74A9FF);
+            box-shadow: 0 0 12px rgba(116,169,255,.18);
         }
 
         .filter-pill {
@@ -566,7 +598,7 @@
         }
 
         .sticker-card {
-            border-radius: 20px;
+            border-radius: 16px;
             background:
                 linear-gradient(145deg, rgba(255,255,255,.12), rgba(255,255,255,.025)),
                 rgba(7,17,31,.88);
@@ -579,7 +611,7 @@
             position: absolute;
             inset: 7px;
             border: 1px solid rgba(255,255,255,.08);
-            border-radius: 14px;
+            border-radius: 10px;
             pointer-events: none;
             z-index: 1;
         }
@@ -633,13 +665,184 @@
             background: rgba(7,17,31,.68);
             border-color: rgba(255,255,255,.18);
         }
+        .btn-secondary { font-size: 1rem; font-weight: 600; line-height: 1.2; min-height: 52px; }
+        .action-grid button { min-width: 0; white-space: normal; text-wrap: balance; line-height: 1.15; min-height: 56px; padding-inline: 16px; }
+        .action-grid .btn-primary { font-size: clamp(.92rem, 3.8vw, 1.02rem); }
+        .action-grid .btn-secondary { font-size: clamp(.92rem, 3.6vw, 1rem); }
         .bottom-nav {
-            background: rgba(7,17,31,.90);
-            border-top: 1px solid rgba(255,255,255,.16);
-            box-shadow: 0 -18px 40px rgba(0,0,0,.30);
+            background: rgba(4,9,18,.98);
+            border-top: 1px solid rgba(255,255,255,.10);
+            box-shadow: 0 -20px 46px rgba(0,0,0,.40);
         }
         .nav-item.active {
             color: #B6FF00;
+        }
+
+
+
+        /* Loader logo oficial mini zoom */
+        .official-loader-mark {
+            width: min(214px, 60vw);
+            height: min(286px, 78vw);
+            padding: 22px 18px 30px;
+            border-radius: 28px;
+            background: rgba(7,17,31,.96);
+            border: 1px solid rgba(255,255,255,.18);
+            box-shadow: 0 26px 70px rgba(0,0,0,.36), 0 0 44px rgba(214,169,58,.28);
+            overflow: hidden;
+            animation: logoMiniZoom 2s cubic-bezier(.18,.82,.22,1) both, floatSoft 2.8s ease-in-out 2s infinite;
+        }
+        .loader-official-logo {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            object-position: center center;
+            display: block;
+            transform: scale(1);
+            filter: drop-shadow(0 8px 12px rgba(0,0,0,.28));
+            padding-bottom: 0;
+            animation: logoInnerSettle 2s cubic-bezier(.18,.82,.22,1) both;
+        }
+        .official-loader-mark .mark-shine {
+            border-radius: 28px;
+        }
+        @keyframes logoMiniZoom {
+            0% { opacity: 0; transform: scale(.78) translateY(12px); filter: blur(2px); }
+            62% { opacity: 1; transform: scale(1.03) translateY(0); filter: blur(0); }
+            100% { opacity: 1; transform: scale(1) translateY(0); filter: blur(0); }
+        }
+        @keyframes logoInnerSettle {
+            0% { transform: scale(.86); }
+            62% { transform: scale(1.03); }
+            100% { transform: scale(1); }
+        }
+        @keyframes floatSoft {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+
+
+
+        /* Modal propio para resetear progreso */
+        .confirm-modal-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 2200;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 22px;
+            background: rgba(0,0,0,.72);
+            backdrop-filter: blur(10px);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity .22s ease;
+        }
+        .confirm-modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .confirm-modal-card {
+            width: min(100%, 430px);
+            background: linear-gradient(180deg, rgba(16,24,39,.98), rgba(7,17,31,.98));
+            border: 1px solid rgba(255,255,255,.16);
+            border-radius: 28px;
+            padding: 24px;
+            box-shadow: 0 30px 90px rgba(0,0,0,.55);
+            transform: translateY(12px) scale(.96);
+            transition: transform .24s cubic-bezier(.18,.82,.22,1);
+        }
+        .confirm-modal-overlay.active .confirm-modal-card {
+            transform: translateY(0) scale(1);
+        }
+        .confirm-icon {
+            width: 54px;
+            height: 54px;
+            border-radius: 18px;
+            display: grid;
+            place-items: center;
+            margin-bottom: 14px;
+            background: rgba(230,29,37,.14);
+            border: 1px solid rgba(230,29,37,.35);
+            color: #ff6b6b;
+            font-size: 1.55rem;
+        }
+        .confirm-title {
+            font-family: var(--font-heading);
+            color: var(--white);
+            font-size: 1.75rem;
+            line-height: 1;
+            margin-bottom: 10px;
+        }
+        .confirm-copy {
+            color: rgba(255,255,255,.72);
+            font-size: .96rem;
+            line-height: 1.5;
+            margin-bottom: 18px;
+        }
+        .confirm-warning {
+            background: rgba(255,255,255,.06);
+            border: 1px solid rgba(255,255,255,.10);
+            border-radius: 16px;
+            padding: 12px 14px;
+            color: rgba(255,255,255,.82);
+            font-size: .88rem;
+            margin-bottom: 18px;
+        }
+        .confirm-actions {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
+        }
+        .btn-confirm-danger {
+            width: 100%;
+            padding: 15px 18px;
+            border-radius: 16px;
+            background: linear-gradient(135deg, #E61D25, #FF4B00);
+            color: white;
+            font-weight: 900;
+            font-size: 1rem;
+        }
+        .btn-confirm-cancel {
+            width: 100%;
+            padding: 14px 18px;
+            border-radius: 16px;
+            background: rgba(255,255,255,.08);
+            border: 1px solid rgba(255,255,255,.14);
+            color: white;
+            font-weight: 800;
+        }
+        .btn-confirm-danger:active,
+        .btn-confirm-cancel:active {
+            transform: scale(.98);
+        }
+
+
+        /* Ajustes finales: nombre, sonido visual y barras limpias */
+        .loading-brand, .header-title, .header-title span, .footer-legal {
+            text-transform: none !important;
+            letter-spacing: .2px;
+        }
+        .loading-brand {
+            font-family: var(--font-body);
+            font-weight: 900;
+        }
+        .header-title {
+            font-family: var(--font-body);
+            font-weight: 900;
+        }
+        #dash-bar-fill.progress-bar-fill,
+        .progress-bar-fill {
+            background: linear-gradient(90deg, #3155FF 0%, #38BDF8 52%, #00C853 100%) !important;
+            box-shadow: 0 0 14px rgba(56,189,248,.22) !important;
+        }
+        .section-progress-fill {
+            background: linear-gradient(90deg, #38BDF8 0%, #00C853 100%) !important;
+            box-shadow: 0 0 8px rgba(56,189,248,.18) !important;
+        }
+        .loader-bar-fill {
+            background: linear-gradient(90deg, #3155FF 0%, #38BDF8 48%, #00C853 100%) !important;
+            box-shadow: 0 0 18px rgba(56,189,248,.28) !important;
         }
 
         @media (prefers-reduced-motion: reduce) {
@@ -668,8 +871,8 @@
             <span class="geo-band band-3"></span>
             <span class="geo-band band-4"></span>
         </div>
-        <div class="loader-logo figurit-mark" aria-label="FiguritApp">
-            <span class="mark-card">26</span>
+        <div class="loader-logo figurit-mark official-loader-mark" aria-label="FiguritApp">
+            <img class="loader-official-logo" src="https://i.ibb.co/p6J5B1kV/mundial-2026.png" alt="Logo mundial 2026">
             <span class="mark-shine"></span>
         </div>
         <h2 class="loading-brand">FiguritApp</h2>
@@ -679,7 +882,10 @@
 
     <div id="main-app" class="screen hidden">
         <header class="app-header">
-            <h2 class="header-title">Figurit<span>App</span></h2>
+            <div class="brand-wrap">
+                <img src="logo.png" alt="Logo FiguritApp" class="brand-logo">
+                <h2 class="header-title">Figurit<span>App</span></h2>
+            </div>
             <div id="header-stats" style="font-size:0.9rem; color:var(--lime); font-weight:bold; background:rgba(60,172,59,0.1); padding: 4px 10px; border-radius: 12px; border: 1px solid var(--lime);">0%</div>
         </header>
 
@@ -812,6 +1018,22 @@
             </div>
         </div>
 
+
+        <!-- MODAL RESET PROGRESO -->
+        <div class="confirm-modal-overlay" id="reset-modal" onclick="if(event.target===this) app.closeResetModal()">
+            <div class="confirm-modal-card" role="dialog" aria-modal="true" aria-labelledby="reset-title">
+                <div class="confirm-icon">⚠️</div>
+                <h3 class="confirm-title" id="reset-title">Resetear progreso</h3>
+                <p class="confirm-copy">Vas a borrar todas las figuritas marcadas como tengo, repetidas y reservadas.</p>
+                <div class="confirm-warning">Tip: exportá un backup antes si querés guardar tu avance.</div>
+                <div class="confirm-actions">
+                    <button class="btn-confirm-danger" onclick="app.confirmResetProgress()">Sí, borrar progreso</button>
+                    <button class="btn-confirm-cancel" onclick="app.closeResetModal()">Cancelar</button>
+                </div>
+            </div>
+        </div>
+
+
     </div>
 </div>
 
@@ -836,23 +1058,24 @@ const app = {
         this.loadSettings();
         this.initData();
         this.loadUserProgress();
-
-        let progress = 0;
-        const interval = setInterval(() => {
-            progress += 20;
-            document.getElementById('loader-fill').style.width = `${progress}%`;
-            if (progress >= 100) {
-                clearInterval(interval);
-                setTimeout(() => {
-                    document.getElementById('loading-screen').classList.add('hidden');
-                    // Solo iniciamos la app si se logró cargar la base de datos
-                    if (this.state.albumData.length > 0) {
-                        document.getElementById('main-app').classList.remove('hidden');
-                        this.startApp();
-                    }
-                }, 200);
+        const loaderStart = performance.now();
+        const loaderDuration = 2000;
+        const animateLoader = (now) => {
+            const progress = Math.min((now - loaderStart) / loaderDuration, 1);
+            document.getElementById('loader-fill').style.width = `${Math.round(progress * 100)}%`;
+            if (progress < 1) {
+                requestAnimationFrame(animateLoader);
+                return;
             }
-        }, 80);
+            setTimeout(() => {
+                document.getElementById('loading-screen').classList.add('hidden');
+                if (this.state.albumData.length > 0) {
+                    document.getElementById('main-app').classList.remove('hidden');
+                    this.startApp();
+                }
+            }, 120);
+        };
+        requestAnimationFrame(animateLoader);
 
         this.initPWA();
     },
@@ -1104,6 +1327,7 @@ const app = {
         this.saveUser();
         this.playVibration([15, 30, 15]);
         this.playSound('dup');
+        this.showToast('➕ Repetida sumada');
         this.renderAlbum();
     },
 
@@ -1311,14 +1535,21 @@ const app = {
     },
 
     resetProgress() {
-        if (confirm("⚠️ ¿Seguro? Se borrarán todas tus figuritas marcadas. Exportá backup antes.")) {
-            if (confirm("Última advertencia. Se borrará tu progreso.")) {
-                this.state.user = {};
-                this.saveUser();
-                this.showToast("Progreso reseteado a cero.");
-                this.startApp();
-            }
-        }
+        const modal = document.getElementById('reset-modal');
+        if (modal) modal.classList.add('active');
+    },
+
+    closeResetModal() {
+        const modal = document.getElementById('reset-modal');
+        if (modal) modal.classList.remove('active');
+    },
+
+    confirmResetProgress() {
+        this.state.user = {};
+        this.saveUser();
+        this.closeResetModal();
+        this.showToast("Progreso reseteado a cero.");
+        this.startApp();
     },
 
     showToast(msg) {
@@ -1340,24 +1571,33 @@ const app = {
         try {
             if (!this.audioCtx) this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
             if (this.audioCtx.state === 'suspended') this.audioCtx.resume();
-            
-            const osc = this.audioCtx.createOscillator();
-            const gain = this.audioCtx.createGain();
-            osc.connect(gain); gain.connect(this.audioCtx.destination);
-            const now = this.audioCtx.currentTime;
-            
+
+            const ctx = this.audioCtx;
+            const now = ctx.currentTime;
+            const tone = (freq, duration, vol, wave = 'sine', delay = 0) => {
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.type = wave;
+                osc.frequency.setValueAtTime(freq, now + delay);
+                gain.gain.setValueAtTime(0.0001, now + delay);
+                gain.gain.exponentialRampToValueAtTime(vol, now + delay + 0.012);
+                gain.gain.exponentialRampToValueAtTime(0.0001, now + delay + duration);
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.start(now + delay);
+                osc.stop(now + delay + duration + 0.03);
+            };
+
             if (type === 'tengo') {
-                osc.type = 'sine'; osc.frequency.setValueAtTime(600, now); osc.frequency.exponentialRampToValueAtTime(1200, now + 0.1);
-                gain.gain.setValueAtTime(0.1, now); gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
-                osc.start(now); osc.stop(now + 0.1);
+                // Pip amigable al agregar figurita: corto, claro y no molesto
+                tone(980, 0.075, 0.075, 'sine', 0);
+                tone(1320, 0.085, 0.050, 'triangle', 0.055);
             } else if (type === 'dup') {
-                osc.type = 'square'; osc.frequency.setValueAtTime(400, now); osc.frequency.exponentialRampToValueAtTime(300, now + 0.1);
-                gain.gain.setValueAtTime(0.05, now); gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
-                osc.start(now); osc.stop(now + 0.1);
-            } else { 
-                osc.type = 'triangle'; osc.frequency.setValueAtTime(800, now);
-                gain.gain.setValueAtTime(0.05, now); gain.gain.exponentialRampToValueAtTime(0.01, now + 0.05);
-                osc.start(now); osc.stop(now + 0.05);
+                // Repetida: distinto pero suave
+                tone(620, 0.065, 0.060, 'sine', 0);
+                tone(820, 0.075, 0.040, 'triangle', 0.045);
+            } else {
+                tone(760, 0.055, 0.035, 'sine', 0);
             }
         } catch(e) {}
     },
@@ -1392,7 +1632,7 @@ const app = {
         const manifestData = {
             name: "FiguritApp", short_name: "FiguritApp", start_url: ".", display: "standalone",
             background_color: "#07111F", theme_color: "#07111F", description: "Tracker Manual de Álbum",
-            icons: [{ src: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="%2307111F"/><text x="50" y="60" font-size="40" fill="%23D6A93A" text-anchor="middle">SC</text></svg>', sizes: "192x192", type: "image/svg+xml", purpose: "any maskable" }]
+            icons: [{ src: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="%2307111F"/><text x="50" y="60" font-size="40" fill="%23D6A93A" text-anchor="middle">FA</text></svg>', sizes: "192x192", type: "image/svg+xml", purpose: "any maskable" }]
         };
         const manifestBlob = new Blob([JSON.stringify(manifestData)], {type: 'application/json'});
         document.getElementById('manifest-link').href = URL.createObjectURL(manifestBlob);
