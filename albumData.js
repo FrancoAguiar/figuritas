@@ -1,6 +1,6 @@
 // albumData.js - generado desde el CSV real corregido v4
 window.albumMeta = {
-  "appName": "Sticker Cup 2026",
+  "appName": "FiguritApp",
   "sourceFile": "figuritas-mundial-2026 (1).csv",
   "totalStickers": 994,
   "totalGroups": 50,

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Sticker Cup 2026</title>
+    <title>FiguritApp</title>
     <link id="manifest-link" rel="manifest" href="">
     <meta name="theme-color" content="#07111F">
     
@@ -296,9 +296,363 @@
         @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
         @keyframes fadeOut { to { opacity: 0; transform: translateY(-10px); } }
         #confetti-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 9999; }
+    
+
+        /* =========================================
+           FIGURITAPP GEOMETRIC WORLD STYLE
+           Inspirado en formas geométricas mundialistas, sin logos oficiales.
+           ========================================= */
+        :root {
+            --brand-red: #E61D25;
+            --brand-orange: #FF4B00;
+            --brand-green: #00C853;
+            --brand-lime: #B6FF00;
+            --brand-blue: #3155FF;
+            --brand-sky: #74A9FF;
+            --brand-burgundy: #7A1010;
+            --brand-navy: #07111F;
+            --brand-white: #F8FAFC;
+            --glass-bg: rgba(7, 17, 31, 0.68);
+            --glass-border: rgba(255, 255, 255, 0.18);
+        }
+
+        body.figurit-theme {
+            background-color: var(--brand-navy);
+            background-image:
+                radial-gradient(circle at 12% 6%, rgba(255, 75, 0, .42), transparent 24%),
+                radial-gradient(circle at 88% 4%, rgba(0, 200, 83, .36), transparent 26%),
+                radial-gradient(circle at 30% 100%, rgba(49, 85, 255, .36), transparent 30%),
+                linear-gradient(180deg, #07111F 0%, #101827 100%);
+        }
+
+        body.figurit-theme::before {
+            content: "";
+            position: fixed;
+            inset: -18%;
+            z-index: -2;
+            pointer-events: none;
+            opacity: .28;
+            background:
+                repeating-radial-gradient(
+                    circle at 50% 45%,
+                    transparent 0 32px,
+                    #7A1010 33px 51px,
+                    #F8FAFC 52px 66px,
+                    #74A9FF 67px 90px,
+                    #3155FF 91px 118px,
+                    #B6FF00 119px 144px,
+                    #00C853 145px 174px,
+                    #FF4B00 175px 205px,
+                    #E61D25 206px 238px
+                );
+            filter: saturate(1.18) blur(.2px);
+            transform: rotate(-12deg) scale(1.15);
+            animation: geoFlow 22s ease-in-out infinite alternate;
+        }
+
+        body.figurit-theme::after {
+            content: "";
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            pointer-events: none;
+            background:
+                linear-gradient(180deg, rgba(7,17,31,.18), rgba(7,17,31,.92) 78%),
+                radial-gradient(circle at 50% 0%, rgba(255,255,255,.10), transparent 38%);
+        }
+
+        @keyframes geoFlow {
+            from { transform: rotate(-14deg) scale(1.12) translate3d(-2.5%, -1%, 0); }
+            to { transform: rotate(-4deg) scale(1.24) translate3d(2.5%, 1%, 0); }
+        }
+
+        .app-container {
+            background: linear-gradient(180deg, rgba(7,17,31,.56), rgba(7,17,31,.84));
+            border-inline: 1px solid rgba(255,255,255,.08);
+        }
+
+        #loading-screen {
+            overflow: hidden;
+            isolation: isolate;
+            background: #07111F;
+        }
+
+        .loading-geo {
+            position: absolute;
+            inset: -28%;
+            z-index: 0;
+            opacity: .98;
+            background:
+                repeating-radial-gradient(
+                    circle at 50% 50%,
+                    #F8FAFC 0 36px,
+                    #7A1010 37px 58px,
+                    #74A9FF 59px 88px,
+                    #3155FF 89px 122px,
+                    #B6FF00 123px 154px,
+                    #00C853 155px 190px,
+                    #FF4B00 191px 226px,
+                    #E61D25 227px 262px
+                );
+            transform: rotate(45deg) scale(1.18);
+            animation: loadingTunnel 6.5s cubic-bezier(.45,0,.2,1) infinite alternate;
+        }
+
+        .loading-geo::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at center, transparent 0 16%, rgba(7,17,31,.12) 28%, rgba(7,17,31,.88) 68%);
+        }
+
+        .geo-band {
+            position: absolute;
+            width: 34vw;
+            height: 34vw;
+            min-width: 180px;
+            min-height: 180px;
+            border-radius: 42px;
+            border: 24px solid rgba(255,255,255,.22);
+            transform: rotate(45deg);
+            filter: blur(.15px);
+            animation: bandDrift 7s ease-in-out infinite alternate;
+        }
+        .band-1 { left: 8%; top: 18%; border-color: rgba(49,85,255,.72); }
+        .band-2 { right: 3%; top: 24%; border-color: rgba(182,255,0,.76); animation-delay: -.8s; }
+        .band-3 { left: 20%; bottom: 8%; border-color: rgba(255,75,0,.74); animation-delay: -1.5s; }
+        .band-4 { right: 22%; bottom: 16%; border-color: rgba(0,200,83,.74); animation-delay: -2.2s; }
+
+        @keyframes loadingTunnel {
+            0% { transform: rotate(44deg) scale(1.12) translate3d(-2%, -1%, 0); }
+            100% { transform: rotate(34deg) scale(1.28) translate3d(2%, 1%, 0); }
+        }
+        @keyframes bandDrift {
+            from { transform: rotate(45deg) translate3d(-8px, 4px, 0) scale(.96); }
+            to { transform: rotate(45deg) translate3d(10px, -6px, 0) scale(1.04); }
+        }
+
+        #loading-screen > *:not(.loading-geo) {
+            position: relative;
+            z-index: 2;
+        }
+
+        .figurit-mark {
+            width: 112px;
+            height: 138px;
+            border-radius: 34px;
+            display: grid;
+            place-items: center;
+            background:
+                linear-gradient(#fff, #fff) padding-box,
+                linear-gradient(135deg, #7A1010, #E61D25, #FF4B00, #B6FF00, #3155FF) border-box;
+            border: 8px solid transparent;
+            box-shadow: 0 28px 90px rgba(0,0,0,.42), 0 0 44px rgba(214,169,58,.42);
+            margin-bottom: 18px;
+            animation: cardFloat 2.8s ease-in-out infinite;
+            overflow: hidden;
+        }
+        .mark-card {
+            font-family: var(--font-heading);
+            font-size: 3.4rem;
+            line-height: 1;
+            letter-spacing: -1px;
+            color: #07111F;
+            text-shadow: 0 2px 0 rgba(214,169,58,.38);
+        }
+        .mark-shine {
+            position: absolute;
+            inset: -60%;
+            background: linear-gradient(115deg, transparent 35%, rgba(255,255,255,.72) 48%, transparent 60%);
+            animation: shineSweep 2.4s ease-in-out infinite;
+        }
+        .loading-brand {
+            font-size: 2.2rem;
+            color: #fff;
+            text-shadow: 0 4px 18px rgba(0,0,0,.45);
+            letter-spacing: .9px;
+        }
+        @keyframes cardFloat { 0%,100% { transform: translateY(0) rotate(-1deg); } 50% { transform: translateY(-12px) rotate(1.5deg); } }
+        @keyframes shineSweep { 0% { transform: translateX(-45%) rotate(12deg); opacity: 0; } 35% { opacity: .9; } 70%,100% { transform: translateX(45%) rotate(12deg); opacity: 0; } }
+
+        .loader-bar-bg {
+            width: min(280px, 72vw);
+            height: 10px;
+            border: 1px solid rgba(255,255,255,.38);
+            background: rgba(7,17,31,.55);
+            box-shadow: inset 0 0 0 1px rgba(0,0,0,.25), 0 12px 35px rgba(0,0,0,.25);
+        }
+        .loader-bar-fill {
+            background: linear-gradient(90deg, #E61D25, #FF4B00, #B6FF00, #00C853, #3155FF, #74A9FF);
+            background-size: 220% 100%;
+            box-shadow: 0 0 22px rgba(182,255,0,.52);
+            animation: progressSweep 1.2s linear infinite;
+        }
+        @keyframes progressSweep { from { background-position: 0% 0; } to { background-position: 220% 0; } }
+        .loader-text {
+            color: rgba(255,255,255,.92);
+            text-shadow: 0 2px 12px rgba(0,0,0,.55);
+            font-weight: 700;
+        }
+
+        .app-header {
+            background:
+                linear-gradient(90deg, rgba(230,29,37,.18), rgba(49,85,255,.24), rgba(0,200,83,.15)),
+                rgba(7,17,31,.82);
+            border-bottom: 1px solid rgba(255,255,255,.22);
+            box-shadow: 0 18px 35px rgba(0,0,0,.22);
+        }
+        .header-title {
+            font-size: 1.75rem;
+            text-shadow: 0 4px 14px rgba(0,0,0,.35);
+        }
+        .header-title span {
+            color: var(--brand-lime);
+            text-shadow: 0 0 20px rgba(182,255,0,.38);
+        }
+        #header-stats {
+            color: #07111F !important;
+            background: linear-gradient(135deg, #B6FF00, #F8FAFC) !important;
+            border: 0 !important;
+            box-shadow: 0 0 24px rgba(182,255,0,.28);
+        }
+
+        .dash-summary, .exchange-box, .section-group, .modal-content {
+            background: rgba(7,17,31,.74);
+            border: 1px solid rgba(255,255,255,.18);
+            box-shadow: 0 18px 45px rgba(0,0,0,.25);
+        }
+        .dash-summary {
+            background:
+                radial-gradient(circle at 0% 0%, rgba(255,75,0,.22), transparent 34%),
+                radial-gradient(circle at 100% 0%, rgba(49,85,255,.24), transparent 34%),
+                rgba(7,17,31,.76);
+        }
+        .progress-bar-bg, .section-progress {
+            background: rgba(255,255,255,.10);
+        }
+        .progress-bar-fill, .section-progress-fill {
+            background: linear-gradient(90deg, #E61D25, #FF4B00, #B6FF00, #00C853, #3155FF);
+            box-shadow: 0 0 18px rgba(182,255,0,.32);
+        }
+
+        .filter-pill {
+            background: rgba(7,17,31,.62);
+            border-color: rgba(255,255,255,.20);
+            color: rgba(255,255,255,.82);
+        }
+        .filter-pill.active {
+            background: linear-gradient(135deg, #F8FAFC, #B6FF00);
+            color: #07111F;
+            box-shadow: 0 8px 24px rgba(182,255,0,.22);
+        }
+        .search-bar, .textarea-input {
+            background: rgba(7,17,31,.76);
+            border-color: rgba(255,255,255,.20);
+            box-shadow: inset 0 0 0 1px rgba(0,0,0,.22);
+        }
+        .search-bar:focus, .textarea-input:focus {
+            border-color: #74A9FF;
+            box-shadow: 0 0 0 4px rgba(116,169,255,.12);
+        }
+
+        .section-header {
+            background:
+                linear-gradient(90deg, rgba(49,85,255,.18), rgba(182,255,0,.07), rgba(255,75,0,.12)),
+                rgba(0,0,0,.22);
+        }
+        .section-title {
+            font-weight: 900;
+            letter-spacing: .1px;
+        }
+
+        .sticker-card {
+            border-radius: 20px;
+            background:
+                linear-gradient(145deg, rgba(255,255,255,.12), rgba(255,255,255,.025)),
+                rgba(7,17,31,.88);
+            border: 1px dashed rgba(255,255,255,.22);
+            color: rgba(255,255,255,.42);
+            box-shadow: 0 12px 28px rgba(0,0,0,.28);
+        }
+        .sticker-card::after {
+            content: "";
+            position: absolute;
+            inset: 7px;
+            border: 1px solid rgba(255,255,255,.08);
+            border-radius: 14px;
+            pointer-events: none;
+            z-index: 1;
+        }
+        .sticker-card.special::before {
+            background: linear-gradient(45deg, transparent, rgba(214,169,58,.24), rgba(255,255,255,.20), transparent);
+            animation: specialFoil 2.7s ease-in-out infinite;
+        }
+        @keyframes specialFoil { from { transform: translateX(-25%) rotate(45deg); } to { transform: translateX(25%) rotate(45deg); } }
+        .sticker-card.tengo {
+            background:
+                radial-gradient(circle at top, rgba(182,255,0,.26), transparent 54%),
+                linear-gradient(145deg, rgba(0,200,83,.34), rgba(7,17,31,.88));
+            border-color: #B6FF00;
+            box-shadow: 0 0 0 1px rgba(182,255,0,.22), 0 16px 30px rgba(0,200,83,.16);
+        }
+        .sticker-card.tengo .st-status-lbl {
+            background: linear-gradient(135deg, #B6FF00, #F8FAFC);
+            color: #07111F;
+        }
+        .sticker-card.repetida {
+            border-color: #FF4B00;
+            box-shadow: 0 0 0 1px rgba(255,75,0,.35), 0 16px 30px rgba(255,75,0,.18);
+        }
+        .sticker-card.reservada {
+            border-color: #74A9FF;
+            box-shadow: 0 0 0 1px rgba(116,169,255,.42), 0 16px 30px rgba(49,85,255,.18);
+        }
+        .st-code {
+            font-size: 1.38rem;
+            color: currentColor;
+        }
+        .st-name {
+            font-weight: 700;
+            color: rgba(255,255,255,.72);
+        }
+        .sticker-card.tengo .st-name, .sticker-card.tengo .st-code {
+            color: #F8FAFC;
+        }
+        .badge-rep, .btn-plus-dup {
+            background: linear-gradient(135deg, #FF4B00, #E61D25);
+        }
+        .badge-res {
+            background: linear-gradient(90deg, #3155FF, #74A9FF);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #B6FF00, #F8FAFC);
+            box-shadow: 0 14px 30px rgba(182,255,0,.18);
+        }
+        .btn-secondary, .btn-action {
+            background: rgba(7,17,31,.68);
+            border-color: rgba(255,255,255,.18);
+        }
+        .bottom-nav {
+            background: rgba(7,17,31,.90);
+            border-top: 1px solid rgba(255,255,255,.16);
+            box-shadow: 0 -18px 40px rgba(0,0,0,.30);
+        }
+        .nav-item.active {
+            color: #B6FF00;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: .001ms !important;
+                animation-iteration-count: 1 !important;
+                scroll-behavior: auto !important;
+            }
+        }
+
     </style>
 </head>
-<body>
+<body class="figurit-theme">
 
 <!-- BASE DE DATOS REAL EXTERNA -->
 <script src="albumData.js"></script>
@@ -308,23 +662,24 @@
     <div id="toast-container" class="toast-container"></div>
 
     <div id="loading-screen" class="screen">
-        <svg class="loader-logo" viewBox="0 0 24 24" fill="none" stroke="url(#goldGrad)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <defs>
-                <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stop-color="#D6A93A" />
-                    <stop offset="100%" stop-color="#FFF" />
-                </linearGradient>
-            </defs>
-            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
-        </svg>
-        <h2>Sticker Cup 2026</h2>
+        <div class="loading-geo" aria-hidden="true">
+            <span class="geo-band band-1"></span>
+            <span class="geo-band band-2"></span>
+            <span class="geo-band band-3"></span>
+            <span class="geo-band band-4"></span>
+        </div>
+        <div class="loader-logo figurit-mark" aria-label="FiguritApp">
+            <span class="mark-card">26</span>
+            <span class="mark-shine"></span>
+        </div>
+        <h2 class="loading-brand">FiguritApp</h2>
         <div class="loader-bar-bg"><div class="loader-bar-fill" id="loader-fill"></div></div>
         <p class="loader-text">Iniciando base de datos...</p>
     </div>
 
     <div id="main-app" class="screen hidden">
         <header class="app-header">
-            <h2 class="header-title">Sticker<span>Cup</span></h2>
+            <h2 class="header-title">Figurit<span>App</span></h2>
             <div id="header-stats" style="font-size:0.9rem; color:var(--lime); font-weight:bold; background:rgba(60,172,59,0.1); padding: 4px 10px; border-radius: 12px; border: 1px solid var(--lime);">0%</div>
         </header>
 
@@ -410,8 +765,8 @@
                 <button class="btn-secondary btn-danger" onclick="app.resetProgress()" style="margin-top: 20px;">⚠️ Resetear Progreso</button>
 
                 <div class="footer-legal">
-                    Sticker Cup 2026 v7.2<br>
-                    Base real cargada desde albumData.js. Tu progreso se guarda localmente en tu navegador.
+                    FiguritApp v1.0<br>
+                    Tracker no oficial para coleccionistas. Base real cargada desde albumData.js. Tu progreso se guarda localmente.
                 </div>
             </div>
         </div>
@@ -902,7 +1257,7 @@ const app = {
 
     copyToClipboard(type) {
         const text = document.getElementById(`list-${type}`).innerText;
-        navigator.clipboard.writeText(`Mis ${type} (Sticker Cup 2026):\n\n${text}`).then(() => {
+        navigator.clipboard.writeText(`Mis ${type} (FiguritApp):\n\n${text}`).then(() => {
             this.showToast("Copiado al portapapeles");
         });
     },
@@ -932,7 +1287,7 @@ const app = {
         const blob = new Blob([JSON.stringify(data)], { type: 'application/json' });
         const a = document.createElement('a');
         a.href = URL.createObjectURL(blob);
-        a.download = `StickerCup_Backup_${new Date().toISOString().split('T')[0]}.json`;
+        a.download = `FiguritApp_Backup_${new Date().toISOString().split('T')[0]}.json`;
         a.click();
     },
 
@@ -1035,7 +1390,7 @@ const app = {
 
     initPWA() {
         const manifestData = {
-            name: "Sticker Cup 2026", short_name: "StickerCup", start_url: ".", display: "standalone",
+            name: "FiguritApp", short_name: "FiguritApp", start_url: ".", display: "standalone",
             background_color: "#07111F", theme_color: "#07111F", description: "Tracker Manual de Álbum",
             icons: [{ src: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="%2307111F"/><text x="50" y="60" font-size="40" fill="%23D6A93A" text-anchor="middle">SC</text></svg>', sizes: "192x192", type: "image/svg+xml", purpose: "any maskable" }]
         };
