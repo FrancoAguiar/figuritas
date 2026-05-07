@@ -1,0 +1,1073 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Sticker Cup 2026</title>
+    <link id="manifest-link" rel="manifest" href="">
+    <meta name="theme-color" content="#07111F">
+    
+    <style>
+        /* =========================================
+           VARIABLES Y CONFIGURACIÓN GLOBAL
+           ========================================= */
+        :root {
+            --navy: #07111F;
+            --navy-light: #101827;
+            --gold: #D6A93A;
+            --green: #3CAC3B;
+            --red: #E61D25;
+            --blue: #2A398D;
+            --white: #F8FAFC;
+            --gray: #D1D4D1;
+            --dark-gray: #474A4A;
+            --lime: #C6FF3D;
+            --orange: #FF7A1A;
+            
+            --glass-bg: rgba(255, 255, 255, 0.08);
+            --glass-border: rgba(255, 255, 255, 0.12);
+            --glass-blur: blur(18px);
+
+            --font-heading: 'Bebas Neue', 'Anton', 'Archivo Black', 'Impact', sans-serif;
+            --font-body: 'Inter', 'Manrope', system-ui, -apple-system, sans-serif;
+            
+            --safe-bottom: env(safe-area-inset-bottom, 20px);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+        }
+
+        body {
+            font-family: var(--font-body);
+            background-color: var(--navy);
+            color: var(--white);
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(circle at top left, rgba(230,29,37,0.15), transparent 32%),
+                radial-gradient(circle at top right, rgba(42,57,141,0.25), transparent 35%),
+                linear-gradient(180deg, var(--navy) 0%, var(--navy-light) 100%);
+            background-attachment: fixed;
+            min-height: 100vh;
+        }
+
+        button {
+            font-family: inherit;
+            cursor: pointer;
+            border: none;
+            outline: none;
+        }
+
+        h1, h2, h3, h4 { font-family: var(--font-heading); letter-spacing: 0.5px; }
+
+        /* =========================================
+           ESTRUCTURA DE PANTALLAS
+           ========================================= */
+        .screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            background: inherit;
+            transition: opacity 0.4s ease, transform 0.4s ease;
+        }
+
+        .hidden {
+            opacity: 0;
+            pointer-events: none;
+            transform: scale(0.98);
+            z-index: -1;
+        }
+
+        #main-app { z-index: 5; }
+
+        .app-container {
+            max-width: 600px;
+            margin: 0 auto;
+            width: 100%;
+            height: 100%;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            background: rgba(0,0,0,0.2);
+            box-shadow: 0 0 40px rgba(0,0,0,0.5);
+        }
+
+        /* =========================================
+           LOADING SCREEN
+           ========================================= */
+        #loading-screen { justify-content: center; align-items: center; z-index: 100; }
+        .loader-logo { width: 100px; height: 100px; margin-bottom: 20px; animation: float 3s ease-in-out infinite; }
+        .loader-bar-bg { width: 200px; height: 6px; background: rgba(255,255,255,0.1); border-radius: 10px; overflow: hidden; margin-top: 20px;}
+        .loader-bar-fill { height: 100%; width: 0%; background: var(--lime); border-radius: 10px; transition: width 0.3s ease; box-shadow: 0 0 10px var(--lime); }
+        .loader-text { margin-top: 15px; font-size: 0.9rem; color: var(--gray); }
+
+        @keyframes float { 0% { transform: translateY(0); } 50% { transform: translateY(-10px); } 100% { transform: translateY(0); } }
+
+        .btn-primary { background: var(--lime); color: var(--navy); padding: 16px 24px; border-radius: 16px; font-weight: bold; font-size: 1.1rem; width: 100%; margin-bottom: 15px; transition: transform 0.1s, filter 0.2s; }
+        .btn-primary:active { transform: scale(0.96); filter: brightness(0.9); }
+        .btn-secondary { background: var(--glass-bg); border: 1px solid var(--glass-border); color: var(--white); padding: 14px 24px; border-radius: 16px; font-weight: 500; width: 100%; margin-bottom: 15px; backdrop-filter: var(--glass-blur); transition: background 0.2s; }
+        .btn-secondary:active { background: rgba(255,255,255,0.15); }
+
+        /* =========================================
+           UI PRINCIPAL
+           ========================================= */
+        .app-header {
+            padding: 20px 20px 15px;
+            background: linear-gradient(180deg, var(--navy) 0%, rgba(7,17,31,0.8) 100%);
+            backdrop-filter: blur(10px);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            border-bottom: 1px solid var(--glass-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .header-title { font-size: 1.5rem; color: var(--white); }
+        .header-title span { color: var(--gold); }
+
+        .views-container { flex: 1; overflow-y: auto; overflow-x: hidden; padding-bottom: calc(80px + var(--safe-bottom)); scroll-behavior: smooth; }
+        .view-section { display: none; padding: 20px; animation: fadeIn 0.3s ease; }
+        .view-section.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .bottom-nav {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: calc(70px + var(--safe-bottom));
+            background: rgba(16, 24, 39, 0.9);
+            backdrop-filter: blur(20px);
+            border-top: 1px solid var(--glass-border);
+            display: flex;
+            justify-content: space-around;
+            padding-bottom: var(--safe-bottom);
+            z-index: 20;
+        }
+        .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--dark-gray); transition: color 0.3s; padding-top: 10px; cursor: pointer; }
+        .nav-item svg { width: 24px; height: 24px; margin-bottom: 4px; fill: currentColor; transition: transform 0.3s; }
+        .nav-item span { font-size: 0.7rem; font-weight: 500; }
+        .nav-item.active { color: var(--lime); }
+        .nav-item.active svg { transform: scale(1.1); filter: drop-shadow(0 0 5px rgba(198, 255, 61, 0.5)); }
+
+        /* =========================================
+           DASHBOARD
+           ========================================= */
+        .dash-summary { 
+            background: var(--glass-bg); border: 1px solid var(--glass-border); 
+            border-radius: 20px; padding: 25px 20px; backdrop-filter: var(--glass-blur); margin-bottom: 20px;
+        }
+        .dash-title { font-size: 1.2rem; color: var(--white); font-weight: bold; margin-bottom: 15px; display: flex; justify-content: space-between;}
+        .dash-title span { color: var(--lime); }
+        .dash-list { list-style: none; padding: 0; font-size: 1.05rem; line-height: 1.8; color: var(--gray); }
+        .dash-list span.val { color: var(--white); font-weight: bold; }
+        
+        .progress-bar-bg { width: 100%; height: 10px; background: rgba(0,0,0,0.3); border-radius: 10px; overflow: hidden; margin-top: 20px; border: 1px solid rgba(255,255,255,0.1); }
+        .progress-bar-fill { height: 100%; background: linear-gradient(90deg, var(--green), var(--lime)); border-radius: 10px; transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 0 15px rgba(198,255,61,0.4); }
+
+        /* =========================================
+           ÁLBUM & FILTROS
+           ========================================= */
+        .filters-scroll { display: flex; overflow-x: auto; gap: 10px; padding-bottom: 10px; margin-bottom: 15px; scrollbar-width: none; }
+        .filters-scroll::-webkit-scrollbar { display: none; }
+        .filter-pill { padding: 8px 16px; background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 20px; color: var(--gray); font-size: 0.9rem; white-space: nowrap; transition: all 0.2s; }
+        .filter-pill.active { background: var(--white); color: var(--navy); font-weight: bold; }
+
+        .search-bar { width: 100%; padding: 14px 20px; background: rgba(0,0,0,0.3); border: 1px solid var(--glass-border); border-radius: 16px; color: white; margin-bottom: 20px; font-size: 1rem; transition: border-color 0.3s; }
+        .search-bar:focus { border-color: var(--lime); }
+
+        .section-group { margin-bottom: 15px; background: rgba(255,255,255,0.03); border: 1px solid var(--glass-border); border-radius: 16px; overflow: hidden; }
+        .section-header { padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; background: rgba(0,0,0,0.2); }
+        .section-title { font-weight: 600; font-size: 1.1rem; display: flex; align-items: center; gap: 10px; }
+        .section-stats { font-size: 0.85rem; color: var(--gray); display: flex; align-items: center; gap: 10px; }
+        .section-progress { width: 60px; height: 4px; background: rgba(255,255,255,0.2); border-radius: 2px; overflow: hidden; }
+        .section-progress-fill { height: 100%; background: var(--lime); width: 0%; transition: width 0.3s; }
+        
+        .section-content { display: none; padding: 15px; grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)); gap: 12px; }
+        .section-group.open .section-content { display: grid; }
+        .section-group.open .section-header { border-bottom: 1px solid var(--glass-border); }
+
+        /* Sticker Card */
+        .sticker-card {
+            aspect-ratio: 2.5 / 3.5;
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            cursor: pointer;
+            transition: transform 0.1s, background 0.3s, border 0.3s;
+            overflow: hidden;
+            background: rgba(0,0,0,0.4);
+            border: 1px dashed rgba(255,255,255,0.2);
+            color: rgba(255,255,255,0.3);
+        }
+        .sticker-card:active { transform: scale(0.95); }
+        
+        .st-code { font-family: var(--font-heading); font-size: 1.3rem; z-index: 2; margin-bottom: 2px;}
+        .st-name { font-size: 0.55rem; text-align: center; padding: 0 4px; z-index: 2; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+        .st-status-lbl { font-size: 0.6rem; font-weight: 600; text-transform: uppercase; margin-top: 8px; z-index: 2; background: rgba(0,0,0,0.5); padding: 2px 6px; border-radius: 8px; }
+
+        /* Estados */
+        .sticker-card.tengo { background: rgba(60, 172, 59, 0.15); border: 1px solid var(--lime); color: var(--white); }
+        .sticker-card.tengo .st-status-lbl { background: var(--lime); color: var(--navy); }
+        .sticker-card.tengo .badge-check { 
+            position: absolute; top: 6px; left: 6px; background: var(--lime); color: var(--navy); 
+            border-radius: 50%; width: 18px; height: 18px; font-size: 11px; display: flex; 
+            align-items: center; justify-content: center; font-weight: bold; z-index: 3;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+        }
+        
+        .sticker-card.repetida { border-color: var(--orange); box-shadow: inset 0 0 15px rgba(255, 122, 26, 0.15); }
+        .badge-rep { position: absolute; bottom: 6px; right: 6px; background: linear-gradient(135deg, var(--orange), #ff4500); color: white; font-size: 0.75rem; font-weight: 900; padding: 2px 8px; border-radius: 12px; z-index: 3; box-shadow: 0 2px 6px rgba(0,0,0,0.6); }
+        .sticker-card.reservada { border-width: 2px; border-color: var(--blue); }
+        .badge-res { position: absolute; top: 0; left: 0; width: 100%; background: var(--blue); color: white; font-size: 0.5rem; font-weight: bold; text-align: center; padding: 2px 0; z-index: 3; text-transform: uppercase; }
+        .sticker-card.special::before { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: linear-gradient(45deg, transparent, rgba(214,169,58,0.15), transparent); transform: rotate(45deg); z-index: 1; pointer-events: none; }
+
+        .pop-anim { animation: pop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        @keyframes pop { 0% { transform: scale(1); } 50% { transform: scale(1.15); } 100% { transform: scale(1); } }
+
+        /* Botón de repetidas rápido */
+        .btn-plus-dup {
+            position: absolute; top: 6px; right: 6px; width: 24px; height: 24px; border-radius: 50%;
+            background: var(--orange); color: white; font-weight: bold; font-size: 16px;
+            display: flex; align-items: center; justify-content: center;
+            border: 2px solid var(--navy); z-index: 5; cursor: pointer; transition: transform 0.1s;
+        }
+        .btn-plus-dup:active { transform: scale(0.85); }
+
+        /* =========================================
+           INTERCAMBIO Y MODO RÁPIDO
+           ========================================= */
+        .textarea-input { width: 100%; height: 120px; background: rgba(0,0,0,0.3); border: 1px solid var(--glass-border); border-radius: 16px; color: white; padding: 15px; font-family: var(--font-body); font-size: 1rem; resize: none; margin-bottom: 15px; }
+        .textarea-input:focus { border-color: var(--lime); outline: none; }
+        .action-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .exchange-box { background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 16px; padding: 20px; margin-bottom: 20px; }
+        .exchange-title { font-size: 1.1rem; color: var(--gold); margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+        .exchange-content { font-size: 0.95rem; color: var(--gray); max-height: 200px; overflow-y: auto; background: rgba(0,0,0,0.2); padding: 15px; border-radius: 8px; font-family: monospace; line-height: 1.6; white-space: pre-wrap; word-break: break-word;}
+        .btn-icon { background: rgba(255,255,255,0.1); border-radius: 8px; padding: 6px 10px; color: white; font-size: 0.8rem; display: flex; align-items: center; gap: 5px; transition: background 0.2s;}
+
+        /* =========================================
+           MINI MENÚ (Bottom Sheet) & AJUSTES
+           ========================================= */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); backdrop-filter: blur(3px); z-index: 1000; display: flex; justify-content: center; align-items: flex-end; opacity: 0; pointer-events: none; transition: opacity 0.2s; }
+        .modal-overlay.active { opacity: 1; pointer-events: auto; }
+        .modal-content { background: var(--navy-light); width: 100%; max-width: 600px; border-radius: 24px 24px 0 0; padding: 25px; transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1); border-top: 1px solid var(--glass-border); }
+        .modal-overlay.active .modal-content { transform: translateY(0); }
+        
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .modal-title { font-size: 1.5rem; color: var(--white); }
+        .modal-close { background: none; color: var(--gray); font-size: 1.5rem; }
+
+        .sticker-modal-info { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; background: rgba(0,0,0,0.2); padding: 15px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.05); }
+        .sm-details { display: flex; flex-direction: column; }
+        .sm-code { font-family: var(--font-heading); font-size: 2rem; color: var(--gold); line-height: 1;}
+        .sm-name { font-weight: bold; font-size: 1rem; color: var(--white);}
+        .sm-dups-badge { background: var(--orange); color: white; font-weight: bold; padding: 4px 12px; border-radius: 20px; font-size: 1.2rem; }
+
+        .modal-actions { display: grid; gap: 12px; }
+        .btn-action { display: flex; justify-content: center; align-items: center; gap: 10px; padding: 18px; border-radius: 16px; background: var(--glass-bg); color: white; font-weight: 600; font-size: 1.1rem; border: 1px solid var(--glass-border); transition: transform 0.1s, background 0.2s;}
+        .btn-action:active { transform: scale(0.97); background: rgba(255,255,255,0.15); }
+        .btn-action.add { background: rgba(255, 122, 26, 0.15); border-color: rgba(255, 122, 26, 0.5); color: var(--orange); }
+        .btn-action.res { background: rgba(42, 57, 141, 0.2); border-color: rgba(42, 57, 141, 0.5); color: #8ea0ff; }
+
+        .settings-row { display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-bottom: 1px solid var(--glass-border); }
+        .toggle { position: relative; display: inline-block; width: 50px; height: 28px; }
+        .toggle input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(255,255,255,0.2); transition: .4s; border-radius: 34px; }
+        .slider:before { position: absolute; content: ""; height: 20px; width: 20px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%; }
+        input:checked + .slider { background-color: var(--lime); }
+        input:checked + .slider:before { transform: translateX(22px); background-color: var(--navy); }
+        .btn-danger { background: rgba(230,29,37,0.1); color: var(--red); border: 1px solid var(--red); }
+
+        .toast-container { position: fixed; bottom: calc(90px + var(--safe-bottom)); left: 50%; transform: translateX(-50%); z-index: 2000; display: flex; flex-direction: column; gap: 10px; pointer-events: none; width: 90%; max-width: 400px; }
+        .toast { background: rgba(255,255,255,0.95); color: var(--navy); padding: 12px 20px; border-radius: 30px; font-weight: 600; font-size: 0.9rem; text-align: center; box-shadow: 0 5px 15px rgba(0,0,0,0.3); animation: slideUp 0.3s ease, fadeOut 0.3s ease 2.5s forwards; }
+        @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        @keyframes fadeOut { to { opacity: 0; transform: translateY(-10px); } }
+        #confetti-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 9999; }
+    </style>
+</head>
+<body>
+
+<!-- ARCHIVO DE DATOS EXTERNO -->
+<!-- Si tienes albumData.js, colócalo en el mismo directorio. Si existe window.albumData, se priorizará. -->
+<script src="albumData.js"></script>
+
+<div class="app-container" id="app-container">
+    <canvas id="confetti-canvas"></canvas>
+    <div id="toast-container" class="toast-container"></div>
+
+    <div id="loading-screen" class="screen">
+        <svg class="loader-logo" viewBox="0 0 24 24" fill="none" stroke="url(#goldGrad)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <defs>
+                <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#D6A93A" />
+                    <stop offset="100%" stop-color="#FFF" />
+                </linearGradient>
+            </defs>
+            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+        </svg>
+        <h2>Sticker Cup 2026</h2>
+        <div class="loader-bar-bg"><div class="loader-bar-fill" id="loader-fill"></div></div>
+        <p class="loader-text">Verificando base de datos...</p>
+    </div>
+
+    <div id="main-app" class="screen hidden">
+        <header class="app-header">
+            <h2 class="header-title">Sticker<span>Cup</span></h2>
+            <div id="header-stats" style="font-size:0.9rem; color:var(--lime); font-weight:bold; background:rgba(60,172,59,0.1); padding: 4px 10px; border-radius: 12px; border: 1px solid var(--lime);">0%</div>
+        </header>
+
+        <div class="views-container" id="views-container">
+            <!-- VIEW: DASHBOARD -->
+            <div id="view-dashboard" class="view-section">
+                <div class="dash-summary">
+                    <div class="dash-title">Progreso General <span id="dash-perc">0%</span></div>
+                    <div class="progress-bar-bg"><div class="progress-bar-fill" id="dash-bar-fill"></div></div>
+                    <ul class="dash-list" style="margin-top: 20px;">
+                        <li>Álbum completo: <span class="val" id="dash-txt-perc">0%</span></li>
+                        <li>Tenés: <span class="val" id="dash-txt-tengo">0 / 0</span></li>
+                        <li>Te faltan: <span class="val" id="dash-txt-faltan">0</span></li>
+                        <li>Repetidas: <span class="val" id="dash-txt-rep">0</span></li>
+                        <li>Reservadas: <span class="val" id="dash-txt-res">0</span></li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- VIEW: ALBUM -->
+            <div id="view-album" class="view-section active">
+                <input type="text" id="search-input" class="search-bar" placeholder="Buscar por código, país o nombre..." oninput="app.filterAlbum()">
+                <div class="filters-scroll">
+                    <button class="filter-pill active" onclick="app.setFilter('all', this)">Todas</button>
+                    <button class="filter-pill" onclick="app.setFilter('tengo', this)">Tengo</button>
+                    <button class="filter-pill" onclick="app.setFilter('falta', this)">Faltan</button>
+                    <button class="filter-pill" onclick="app.setFilter('repetida', this)">Repetidas</button>
+                    <button class="filter-pill" onclick="app.setFilter('reservada', this)">Reservadas</button>
+                    <button class="filter-pill" onclick="app.setFilter('special', this)">Especiales</button>
+                </div>
+                <div id="album-container"></div>
+                <div id="empty-state" style="display:none; text-align:center; padding: 40px 20px; color:var(--gray);">
+                    <p>No encontramos resultados.</p>
+                </div>
+            </div>
+
+            <!-- VIEW: RÁPIDO -->
+            <div id="view-quick" class="view-section">
+                <h3 style="margin-bottom: 10px;">Ingreso Rápido</h3>
+                <p style="color:var(--gray); font-size:0.9rem; margin-bottom:15px;">Ideal si tenés una pila de figuritas. Separalas por comas. Ej: ARG01, MEX15, FWC-1</p>
+                <textarea id="quick-input" class="textarea-input" placeholder="ARG01, MEX02..."></textarea>
+                <div class="action-grid">
+                    <button class="btn-primary" onclick="app.processQuickAdd('tengo')" style="margin-bottom:0;">Marcar "La tengo"</button>
+                    <button class="btn-secondary" onclick="app.processQuickAdd('repetida')" style="margin-bottom:0; border-color:var(--orange); color:var(--orange);">+ Repetidas</button>
+                </div>
+            </div>
+
+            <!-- VIEW: INTERCAMBIO -->
+            <div id="view-swap" class="view-section">
+                <div class="exchange-box">
+                    <div class="exchange-title">Mis Faltantes <button class="btn-icon" onclick="app.copyToClipboard('faltantes')">📋 Copiar</button></div>
+                    <div class="exchange-content" id="list-faltantes">Generando...</div>
+                </div>
+                <div class="exchange-box">
+                    <div class="exchange-title">Mis Repetidas <button class="btn-icon" onclick="app.copyToClipboard('repetidas')">📋 Copiar</button></div>
+                    <div class="exchange-content" id="list-repetidas">Generando...</div>
+                </div>
+                <button class="btn-primary" onclick="app.shareWhatsApp()" style="background:#25D366; color:white;">
+                    Compartir listas por WhatsApp
+                </button>
+            </div>
+
+            <!-- VIEW: AJUSTES -->
+            <div id="view-settings" class="view-section">
+                <h3 style="margin-bottom: 20px; color: var(--gold);">Preferencias</h3>
+                <div class="settings-row">
+                    <div class="settings-label">🔊 Sonidos</div>
+                    <label class="toggle"><input type="checkbox" id="set-sound" checked onchange="app.toggleSetting('sound')"><span class="slider"></span></label>
+                </div>
+                <div class="settings-row">
+                    <div class="settings-label">📳 Vibración</div>
+                    <label class="toggle"><input type="checkbox" id="set-vibration" checked onchange="app.toggleSetting('vibration')"><span class="slider"></span></label>
+                </div>
+                <div class="settings-row">
+                    <div class="settings-label">✨ Animaciones</div>
+                    <label class="toggle"><input type="checkbox" id="set-animations" checked onchange="app.toggleSetting('animations')"><span class="slider"></span></label>
+                </div>
+
+                <h3 style="margin: 30px 0 20px; color: var(--gold);">Datos</h3>
+                <button class="btn-secondary" onclick="app.exportBackup()">📥 Exportar Backup (JSON)</button>
+                <button class="btn-secondary" onclick="document.getElementById('backup-input').click()">📤 Importar Backup (JSON)</button>
+                <input type="file" id="backup-input" accept=".json" style="display:none" onchange="app.importBackup(event)">
+                <button class="btn-secondary btn-danger" onclick="app.resetProgress()" style="margin-top: 20px;">⚠️ Resetear Progreso</button>
+
+                <div class="footer-legal">
+                    Sticker Cup 2026 v4.0<br>
+                    Tracker seguro y offline. Los datos del álbum se cargan de archivo seguro y tu progreso se guarda localmente en el dispositivo.
+                </div>
+            </div>
+        </div>
+
+        <nav class="bottom-nav">
+            <div class="nav-item active" onclick="app.switchView('album')" id="nav-album"><svg viewBox="0 0 24 24"><path d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-1 9H9V9h10v2zm-4 4H9v-2h6v2zm4-8H9V5h10v2z"/></svg><span>Álbum</span></div>
+            <div class="nav-item" onclick="app.switchView('dashboard')" id="nav-dashboard"><svg viewBox="0 0 24 24"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg><span>Stats</span></div>
+            <div class="nav-item" onclick="app.switchView('swap')" id="nav-swap"><svg viewBox="0 0 24 24"><path d="M16 11V5.5l-6 4.5 6 4.5V11zM8 13v5.5l6-4.5-6-4.5V13z"/></svg><span>Listas</span></div>
+            <div class="nav-item" onclick="app.switchView('quick')" id="nav-quick"><svg viewBox="0 0 24 24"><path d="M19 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-2 10h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/></svg><span>Rápido</span></div>
+            <div class="nav-item" onclick="app.switchView('settings')" id="nav-settings"><svg viewBox="0 0 24 24"><path d="M19.14,12.94c0.04-0.3,0.06-0.61,0.06-0.94c0-0.32-0.02-0.64-0.06-0.94l2.03-1.58c0.18-0.14,0.23-0.41,0.12-0.61 l-1.92-3.32c-0.12-0.22-0.37-0.29-0.59-0.22l-2.39,0.96c-0.5-0.38-1.03-0.7-1.62-0.94L14.4,2.81c-0.04-0.24-0.24-0.41-0.48-0.41 h-3.84c-0.24,0-0.43,0.17-0.47,0.41L9.25,5.35C8.66,5.59,8.12,5.92,7.63,6.29L5.24,5.33c-0.22-0.08-0.47,0-0.59,0.22L2.73,8.87 C2.62,9.08,2.66,9.34,2.86,9.48l2.03,1.58C4.84,11.36,4.8,11.69,4.8,12s0.02,0.64,0.06,0.94l-2.03,1.58 c-0.18,0.14-0.23,0.41-0.12,0.61l1.92,3.32c0.12,0.22,0.37,0.29,0.59,0.22l2.39-0.96c0.5,0.38,1.03,0.7,1.62,0.94l0.36,2.54 c0.05,0.24,0.24,0.41,0.48,0.41h3.84c0.24,0,0.43-0.17,0.47-0.41l0.36-2.54c0.59-0.24,1.13-0.56,1.62-0.94l2.39,0.96 c0.22,0.08,0.47,0,0.59-0.22l1.92-3.32c0.12-0.22,0.07-0.49-0.12-0.61L19.14,12.94z M12,15.6c-1.98,0-3.6-1.62-3.6-3.6 s1.62-3.6,3.6-3.6s3.6,1.62,3.6,3.6S13.98,15.6,12,15.6z"/></svg><span>Ajustes</span></div>
+        </nav>
+
+        <!-- MODAL AVANZADO (Long Press) -->
+        <div class="modal-overlay" id="action-modal" onclick="if(event.target===this) app.closeModal()">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title">Avanzado</h3>
+                    <button class="modal-close" onclick="app.closeModal()">×</button>
+                </div>
+                <div class="sticker-modal-info">
+                    <div class="sm-details">
+                        <div class="sm-code" id="modal-code">ARG01</div>
+                        <div class="sm-name" id="modal-name">Lionel Messi</div>
+                    </div>
+                </div>
+                <div class="modal-actions">
+                    <button class="btn-action res" onclick="app.menuToggleReserved()">
+                        <svg viewBox="0 0 24 24" width="20" fill="currentColor"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zM9 6c0-1.66 1.34-3 3-3s3 1.34 3 3v2H9V6zm9 14H6V10h12v10zm-6-3c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z"/></svg>
+                        Reservar / Quitar
+                    </button>
+                    <button class="btn-action add" onclick="app.menuChangeDuplicate(-1)">
+                        Restar repetida
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+// Utilidad para renderizar HTML seguro
+const escapeHTML = str => String(str).replace(/[&<>'"]/g, tag => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'
+}[tag] || tag));
+
+const app = {
+    state: {
+        albumData: [],
+        user: {}, // Solo progreso del usuario
+        settings: { sound: true, vibration: true, animations: true }
+    },
+    currentFilter: 'all', currentSearch: '', selectedStickerId: null, audioCtx: null,
+    touchTimer: null, isLongPress: false,
+    keys: { user: 'stickerCup2026_state_v1', settings: 'stickerCup2026_settings_v1' },
+
+    init() {
+        this.loadSettings();
+        this.initData();
+        this.loadUserProgress();
+
+        let progress = 0;
+        const interval = setInterval(() => {
+            progress += 20;
+            document.getElementById('loader-fill').style.width = `${progress}%`;
+            if (progress >= 100) {
+                clearInterval(interval);
+                setTimeout(() => {
+                    document.getElementById('loading-screen').classList.add('hidden');
+                    document.getElementById('main-app').classList.remove('hidden');
+                    this.startApp();
+                }, 200);
+            }
+        }, 80);
+
+        this.initPWA();
+    },
+
+    startApp() {
+        this.renderAlbum();
+        this.updateDashboard();
+    },
+
+    // =========================================
+    // INICIALIZACIÓN DE DATOS
+    // =========================================
+    initData() {
+        // Priorizar base de datos externa cargada mediante script (albumData.js)
+        if (typeof window.albumData !== 'undefined' && Array.isArray(window.albumData)) {
+            // Aplanar si viene agrupada, o asignar directo si ya es lista de figuritas.
+            this.state.albumData = window.albumData[0].stickers ? window.albumData.flatMap(g => g.stickers) : window.albumData;
+            console.log("Stickers cargados desde archivo externo.");
+            return;
+        }
+        
+        // Fallback exacto embebido si albumData.js no existe, usando tu nomenclatura exacta (ARG01, MEX15).
+        console.log("No se detectó albumData.js, cargando fallback exacto interno.");
+        const data = [];
+        data.push({ id: '00', code: '00', number: 0, prefix: '00', section: '⭐ Especiales & Oficial', name: 'Panini Logo', type: 'special' });
+        
+        const fwcNames = ["Official Emblem", "Official Emblem (Abajo)", "Mascotas", "Slogan", "Pelota", "Canadá - Sede", "México - Sede", "USA - Sede", "Italia 1934", "Brasil 1950", "Alemania 1954", "Chile 1962", "Alemania 1974"];
+        for(let i=1; i<=13; i++) {
+            data.push({ id: `FWC-${i}`, code: `FWC-${i}`, number: i, prefix: 'FWC', section: '⭐ Especiales & Oficial', name: fwcNames[i-1], type: 'special' });
+        }
+
+        const teams = [
+            {p: 'ARG', n: 'Argentina', f: '🇦🇷'}, {p: 'AUS', n: 'Australia', f: '🇦🇺'}, {p: 'AUT', n: 'Austria', f: '🇦🇹'},
+            {p: 'BEL', n: 'Bélgica', f: '🇧🇪'}, {p: 'BOL', n: 'Bolivia', f: '🇧🇴'}, {p: 'BRA', n: 'Brasil', f: '🇧🇷'},
+            {p: 'CAN', n: 'Canadá', f: '🇨🇦'}, {p: 'CHI', n: 'Chile', f: '🇨🇱'}, {p: 'CMR', n: 'Camerún', f: '🇨🇲'},
+            {p: 'COL', n: 'Colombia', f: '🇨🇴'}, {p: 'CRC', n: 'Costa Rica', f: '🇨🇷'}, {p: 'CRO', n: 'Croacia', f: '🇭🇷'},
+            {p: 'DEN', n: 'Dinamarca', f: '🇩🇰'}, {p: 'ECU', n: 'Ecuador', f: '🇪🇨'}, {p: 'EGY', n: 'Egipto', f: '🇪🇬'},
+            {p: 'ENG', n: 'Inglaterra', f: '🏴󠁧󠁢󠁥󠁮󠁧󠁿'}, {p: 'ESP', n: 'España', f: '🇪🇸'}, {p: 'FRA', n: 'Francia', f: '🇫🇷'},
+            {p: 'GER', n: 'Alemania', f: '🇩🇪'}, {p: 'GHA', n: 'Ghana', f: '🇬🇭'}, {p: 'IRN', n: 'Irán', f: '🇮🇷'},
+            {p: 'ITA', n: 'Italia', f: '🇮🇹'}, {p: 'JAM', n: 'Jamaica', f: '🇯🇲'}, {p: 'JPN', n: 'Japón', f: '🇯🇵'},
+            {p: 'KOR', n: 'Corea del Sur', f: '🇰🇷'}, {p: 'KSA', n: 'Arabia Saudita', f: '🇸🇦'}, {p: 'MAR', n: 'Marruecos', f: '🇲🇦'},
+            {p: 'MEX', n: 'México', f: '🇲🇽'}, {p: 'NED', n: 'Países Bajos', f: '🇳🇱'}, {p: 'NGA', n: 'Nigeria', f: '🇳🇬'},
+            {p: 'NOR', n: 'Noruega', f: '🇳🇴'}, {p: 'NZL', n: 'Nueva Zelanda', f: '🇳🇿'}, {p: 'PAN', n: 'Panamá', f: '🇵🇦'},
+            {p: 'PAR', n: 'Paraguay', f: '🇵🇾'}, {p: 'PER', n: 'Perú', f: '🇵🇪'}, {p: 'POL', n: 'Polonia', f: '🇵🇱'},
+            {p: 'POR', n: 'Portugal', f: '🇵🇹'}, {p: 'QAT', n: 'Qatar', f: '🇶🇦'}, {p: 'SEN', n: 'Senegal', f: '🇸🇳'},
+            {p: 'SRB', n: 'Serbia', f: '🇷🇸'}, {p: 'SUI', n: 'Suiza', f: '🇨🇭'}, {p: 'SWE', n: 'Suecia', f: '🇸🇪'},
+            {p: 'TUN', n: 'Túnez', f: '🇹🇳'}, {p: 'TUR', n: 'Turquía', f: '🇹🇷'}, {p: 'URU', n: 'Uruguay', f: '🇺🇾'},
+            {p: 'USA', n: 'Estados Unidos', f: '🇺🇸'}, {p: 'VEN', n: 'Venezuela', f: '🇻🇪'}, {p: 'WAL', n: 'Gales', f: '🏴󠁧󠁢󠁷󠁬󠁳󠁿'}
+        ];
+
+        teams.sort((a,b) => a.n.localeCompare(b.n));
+
+        teams.forEach(t => {
+            for(let i=1; i<=20; i++) {
+                let formattedNum = i.toString().padStart(2, '0'); // ARG01 format
+                let name = i === 1 ? `Escudo ${t.n}` : (i === 13 ? `Formación` : `Jugador ${i}`);
+                data.push({
+                    id: `${t.p}${formattedNum}`, code: `${t.p}${formattedNum}`, number: i, prefix: t.p,
+                    section: `${t.f} ${t.n}`, name: name, type: 'team'
+                });
+            }
+        });
+
+        const ccNames = ["Lamine Yamal", "Joshua Kimmich", "Harry Kane", "Santiago Giménez", "Joško Gvardiol", "Jude Bellingham", "Vinícius Jr", "Lionel Messi", "Kylian Mbappé", "Kevin De Bruyne", "Phil Foden", "Rodri", "Alphonso Davies", "Christian Pulisic", "Emiliano Martínez", "Federico Valverde", "Rafael Leão", "Bukayo Saka", "Florian Wirtz", "Jamal Musiala"];
+        for(let i=1; i<=20; i++) {
+            data.push({ id: `CC-${i}`, code: `CC-${i}`, number: i, prefix: 'CC', section: '⭐ Leyendas / CC', name: ccNames[i-1] || `Leyenda ${i}`, type: 'special' });
+        }
+
+        this.state.albumData = data;
+    },
+
+    loadUserProgress() {
+        const rawUser = localStorage.getItem(this.keys.user);
+        if (rawUser) {
+            this.state.user = JSON.parse(rawUser);
+        }
+    },
+
+    saveUser() {
+        localStorage.setItem(this.keys.user, JSON.stringify(this.state.user));
+        this.updateDashboard();
+    },
+
+    saveSettings() {
+        localStorage.setItem(this.keys.settings, JSON.stringify(this.state.settings));
+    },
+
+    loadSettings() {
+        try {
+            const s = localStorage.getItem(this.keys.settings);
+            if (s) {
+                this.state.settings = { ...this.state.settings, ...JSON.parse(s) };
+                document.getElementById('set-sound').checked = this.state.settings.sound;
+                document.getElementById('set-vibration').checked = this.state.settings.vibration;
+                document.getElementById('set-animations').checked = this.state.settings.animations;
+            }
+        } catch(e) {}
+    },
+
+    // =========================================
+    // RENDERING DE VISTAS (Protegido y Seguro)
+    // =========================================
+    switchView(viewId) {
+        document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
+        document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+        
+        document.getElementById(`view-${viewId}`).classList.add('active');
+        document.getElementById(`nav-${viewId}`).classList.add('active');
+        window.scrollTo({top:0, behavior:'smooth'});
+        if(viewId === 'swap') this.updateExchangeLists();
+    },
+
+    setFilter(type, btnElement) {
+        document.querySelectorAll('.filter-pill').forEach(el => el.classList.remove('active'));
+        btnElement.classList.add('active');
+        this.currentFilter = type;
+        this.renderAlbum();
+    },
+
+    filterAlbum() {
+        this.currentSearch = document.getElementById('search-input').value.toLowerCase().trim();
+        this.renderAlbum();
+    },
+
+    renderAlbum() {
+        const container = document.getElementById('album-container');
+        container.innerHTML = '';
+        let hasResults = false;
+
+        const groups = {};
+        const realGroups = {};
+
+        this.state.albumData.forEach(st => {
+            const u = this.state.user[st.id] || { owned: false, duplicates: 0, reserved: false };
+            
+            if (!realGroups[st.section]) realGroups[st.section] = { total: 0, owned: 0 };
+            realGroups[st.section].total++;
+            if (u.owned) realGroups[st.section].owned++;
+
+            if (this.currentFilter === 'tengo' && !u.owned) return;
+            if (this.currentFilter === 'falta' && u.owned) return;
+            if (this.currentFilter === 'repetida' && u.duplicates === 0) return;
+            if (this.currentFilter === 'reservada' && !u.reserved) return;
+            if (this.currentFilter === 'special' && st.type !== 'special') return;
+
+            if (this.currentSearch) {
+                const term = this.currentSearch;
+                // Búsqueda extendida a múltiples propiedades
+                const fullText = `${st.code} ${st.name} ${st.section} ${st.prefix} ${st.number}`.toLowerCase();
+                if (!fullText.includes(term)) return;
+            }
+
+            if (!groups[st.section]) groups[st.section] = [];
+            groups[st.section].push(st);
+            hasResults = true;
+        });
+
+        document.getElementById('empty-state').style.display = hasResults ? 'none' : 'block';
+
+        for (const [sectionName, stickers] of Object.entries(groups)) {
+            const real = realGroups[sectionName];
+            const perc = Math.round((real.owned / real.total) * 100) || 0;
+            
+            const gDiv = document.createElement('div');
+            gDiv.className = 'section-group';
+            if (this.currentSearch || this.currentFilter !== 'all') gDiv.classList.add('open');
+
+            let stHtml = '';
+            stickers.forEach(st => {
+                const u = this.state.user[st.id] || { owned: false, duplicates: 0, reserved: false };
+                let classes = ['sticker-card'];
+                let statusText = 'Me falta';
+                
+                if (u.owned) { classes.push('tengo'); statusText = 'La tengo'; }
+                if (u.duplicates > 0) classes.push('repetida');
+                if (u.reserved) classes.push('reservada');
+                if (st.type === 'special') classes.push('special');
+
+                // Botón Plus Exclusivo (solo se muestra si la tengo)
+                let plusBtnHTML = u.owned 
+                    ? `<button class="btn-plus-dup" onclick="event.stopPropagation(); app.addDuplicate('${escapeHTML(st.id)}')">+</button>` 
+                    : '';
+
+                stHtml += `
+                    <div class="${classes.join(' ')}" 
+                         data-id="${escapeHTML(st.id)}"
+                         onclick="app.handleCardTap('${escapeHTML(st.id)}', this)"
+                         oncontextmenu="app.handleContextMenu(event, '${escapeHTML(st.id)}')"
+                         ontouchstart="app.handleTouchStart('${escapeHTML(st.id)}')"
+                         ontouchend="app.handleTouchEnd()"
+                         ontouchmove="app.handleTouchEnd()">
+                        
+                        ${u.owned ? `<div class="badge-check">✓</div>` : ''}
+                        ${u.reserved ? '<div class="badge-res">Reservada</div>' : ''}
+                        
+                        <div class="st-code">${escapeHTML(st.code)}</div>
+                        <div class="st-name">${escapeHTML(st.name)}</div>
+                        <div class="st-status-lbl">${statusText}</div>
+                        
+                        ${u.duplicates > 0 ? `<div class="badge-rep">x${u.duplicates}</div>` : ''}
+                        ${plusBtnHTML}
+                    </div>
+                `;
+            });
+
+            gDiv.innerHTML = `
+                <div class="section-header" onclick="this.parentElement.classList.toggle('open')">
+                    <div class="section-title">${escapeHTML(sectionName)}</div>
+                    <div class="section-stats">
+                        <span>${real.owned}/${real.total}</span>
+                        <div class="section-progress">
+                            <div class="section-progress-fill" style="width: ${perc}%"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="section-content">${stHtml}</div>
+            `;
+            container.appendChild(gDiv);
+        }
+    },
+
+    updateDashboard() {
+        const total = this.state.albumData.length;
+        if (total === 0) return;
+
+        let tengo = 0, repetidas = 0, reservadas = 0;
+        
+        // El dashboard SOLO cuenta figuritas que existen en el álbum (evita basuras viejas del user)
+        this.state.albumData.forEach(st => {
+            const u = this.state.user[st.id];
+            if (u) {
+                if (u.owned) tengo++;
+                if (u.duplicates > 0) repetidas += u.duplicates;
+                if (u.reserved) reservadas++;
+            }
+        });
+
+        const faltan = total - tengo;
+        const perc = Math.round((tengo / total) * 100) || 0;
+
+        document.getElementById('dash-perc').innerText = `${perc}%`;
+        document.getElementById('header-stats').innerText = `${perc}%`;
+        document.getElementById('dash-bar-fill').style.width = `${perc}%`;
+
+        document.getElementById('dash-txt-perc').innerText = `${perc}%`;
+        document.getElementById('dash-txt-tengo').innerText = `${tengo} / ${total}`;
+        document.getElementById('dash-txt-faltan').innerText = faltan;
+        document.getElementById('dash-txt-rep').innerText = repetidas;
+        document.getElementById('dash-txt-res').innerText = reservadas;
+
+        if (perc === 100 && total > 0) this.triggerConfetti();
+    },
+
+    // =========================================
+    // FLUJO UX DE INTERACCIÓN (TAP)
+    // =========================================
+    handleCardTap(id, element) {
+        if (this.isLongPress) { this.isLongPress = false; return; }
+
+        let u = this.getUserObj(id);
+
+        if (u.owned) {
+            // Toggle a "Me falta"
+            u.owned = false;
+            u.duplicates = 0; // Se resetean si ya no la tiene
+        } else {
+            // Toggle a "La tengo"
+            u.owned = true;
+            this.playVibration(20);
+            this.playSound('tengo');
+        }
+
+        u.updatedAt = new Date().toISOString();
+        this.saveUser();
+        this.renderAlbum();
+    },
+
+    addDuplicate(id) {
+        let u = this.getUserObj(id);
+        u.owned = true;
+        u.duplicates += 1;
+        u.updatedAt = new Date().toISOString();
+        this.saveUser();
+        this.playVibration([15, 30, 15]);
+        this.playSound('dup');
+        this.renderAlbum();
+    },
+
+    handleContextMenu(e, id) {
+        e.preventDefault();
+        this.openMiniMenu(id);
+    },
+
+    handleTouchStart(id) {
+        this.isLongPress = false;
+        this.touchTimer = setTimeout(() => {
+            this.isLongPress = true;
+            this.playVibration(40);
+            this.openMiniMenu(id);
+        }, 550);
+    },
+
+    handleTouchEnd() {
+        if (this.touchTimer) clearTimeout(this.touchTimer);
+    },
+
+    getUserObj(id) {
+        if (!this.state.user[id]) {
+            this.state.user[id] = { owned: false, duplicates: 0, reserved: false, updatedAt: new Date().toISOString() };
+        }
+        return this.state.user[id];
+    },
+
+    // =========================================
+    // MINI MENÚ AVANZADO
+    // =========================================
+    openMiniMenu(id) {
+        this.selectedStickerId = id;
+        const st = this.state.albumData.find(s => s.id === id);
+        if (!st) return;
+        
+        document.getElementById('modal-code').innerText = st.code;
+        document.getElementById('modal-name').innerText = st.name;
+        document.getElementById('action-modal').classList.add('active');
+    },
+
+    closeModal() {
+        document.getElementById('action-modal').classList.remove('active');
+        this.selectedStickerId = null;
+    },
+
+    menuChangeDuplicate(delta) {
+        if (!this.selectedStickerId) return;
+        let u = this.getUserObj(this.selectedStickerId);
+        u.duplicates += delta;
+        if (u.duplicates < 0) u.duplicates = 0;
+        
+        u.updatedAt = new Date().toISOString();
+        this.saveUser();
+        this.playSound('click');
+        this.playVibration(20);
+        this.closeModal();
+        this.renderAlbum();
+    },
+
+    menuToggleReserved() {
+        if (!this.selectedStickerId) return;
+        let u = this.getUserObj(this.selectedStickerId);
+        u.reserved = !u.reserved;
+        u.updatedAt = new Date().toISOString();
+        this.saveUser();
+        this.playSound('click');
+        this.playVibration(20);
+        this.closeModal();
+        this.renderAlbum();
+    },
+
+    // =========================================
+    // LISTAS Y MODO RÁPIDO
+    // =========================================
+    normalizeInputCode(input) {
+        let upper = input.toUpperCase().replace(/\s+/g, '');
+        // Normaliza "ARG1", "ARG-1" a "ARG01", pero preserva FWC-1 y CC-10
+        let match = upper.match(/^([A-Z]+)-?(\d+)$/);
+        if (match) {
+            let prefix = match[1];
+            let num = parseInt(match[2], 10);
+            if (['FWC', 'CC'].includes(prefix)) {
+                return `${prefix}-${num}`;
+            } else {
+                return `${prefix}${num.toString().padStart(2, '0')}`;
+            }
+        }
+        return upper;
+    },
+
+    processQuickAdd(action) {
+        const input = document.getElementById('quick-input').value;
+        if (!input.trim()) return;
+
+        const rawTokens = input.split(/[\s,\n]+/).map(t => this.normalizeInputCode(t)).filter(t => t);
+        let count = 0; let notFound = [];
+
+        rawTokens.forEach(token => {
+            let match = this.state.albumData.find(s => s.id === token || s.code.toUpperCase() === token);
+            if (!match && !isNaN(token)) {
+                const numMatches = this.state.albumData.filter(s => s.number == parseInt(token));
+                if (numMatches.length === 1) match = numMatches[0];
+            }
+
+            if (match) {
+                let u = this.getUserObj(match.id);
+                if (action === 'tengo') u.owned = true;
+                else if (action === 'repetida') { u.owned = true; u.duplicates++; }
+                u.updatedAt = new Date().toISOString();
+                count++;
+            } else {
+                notFound.push(token);
+            }
+        });
+
+        if (count > 0) {
+            this.saveUser();
+            document.getElementById('quick-input').value = '';
+            this.playVibration([20, 50, 20]);
+            this.playSound('tengo');
+            let msg = `✅ ${count} procesadas.`;
+            if (notFound.length > 0) msg += ` ⚠️ No encontradas: ${notFound.join(', ')}`;
+            this.showToast(msg);
+        }
+    },
+
+    updateExchangeLists() {
+        let faltanGroups = [];
+        let repeGroups = [];
+
+        this.state.albumData.forEach(st => {
+            const u = this.state.user[st.id] || { owned: false, duplicates: 0 };
+            if (!u.owned) faltanGroups.push(st.code);
+            if (u.duplicates > 0) repeGroups.push({ code: st.code, dups: u.duplicates, name: st.name, section: st.section });
+        });
+
+        let fText = faltanGroups.join(', ');
+        let rText = repeGroups.map(r => `${r.code} · ${r.section} · x${r.dups}`).join('\n');
+        
+        document.getElementById('list-faltantes').innerText = fText || "¡No te falta ninguna!";
+        document.getElementById('list-repetidas').innerText = rText || "No tenés repetidas disponibles.";
+
+        this._wsFaltan = faltanGroups;
+        this._wsRepe = repeGroups;
+    },
+
+    copyToClipboard(type) {
+        const text = document.getElementById(`list-${type}`).innerText;
+        navigator.clipboard.writeText(`Mis ${type} (Sticker Cup 2026):\n\n${text}`).then(() => {
+            this.showToast("Copiado al portapapeles");
+        });
+    },
+
+    shareWhatsApp() {
+        let msg = `Estoy completando mi álbum 2026 ⚽\n\n`;
+        if (this._wsFaltan && this._wsFaltan.length > 0) {
+            msg += `Me faltan:\n${this._wsFaltan.join(', ')}\n\n`;
+        }
+        if (this._wsRepe && this._wsRepe.length > 0) {
+            msg += `Tengo repetidas:\n${this._wsRepe.map(r => `${r.code} x${r.dups}`).join(', ')}\n\n`;
+        }
+        msg += `¿Intercambiamos?`;
+        window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
+    },
+
+    // =========================================
+    // AJUSTES, BACKUP Y PWA
+    // =========================================
+    toggleSetting(key) {
+        this.state.settings[key] = document.getElementById(`set-${key}`).checked;
+        this.saveSettings();
+    },
+
+    exportBackup() {
+        const data = { version: 4, date: new Date().toISOString(), user: this.state.user };
+        const blob = new Blob([JSON.stringify(data)], { type: 'application/json' });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = `StickerCup_Backup_${new Date().toISOString().split('T')[0]}.json`;
+        a.click();
+    },
+
+    importBackup(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            try {
+                const data = JSON.parse(e.target.result);
+                if (data.user) {
+                    this.state.user = data.user;
+                    this.saveUser();
+                    this.showToast("Backup restaurado con éxito.");
+                    this.startApp();
+                }
+            } catch(err) { alert("Archivo JSON no válido."); }
+        };
+        reader.readAsText(file);
+        e.target.value = '';
+    },
+
+    resetProgress() {
+        if (confirm("⚠️ ¿Seguro? Se borrarán todas tus figuritas marcadas. Exportá backup antes.")) {
+            if (confirm("Última advertencia. Se borrará tu progreso.")) {
+                this.state.user = {};
+                this.saveUser();
+                this.showToast("Progreso reseteado a cero.");
+                this.startApp();
+            }
+        }
+    },
+
+    showToast(msg) {
+        const container = document.getElementById('toast-container');
+        const t = document.createElement('div');
+        t.className = 'toast'; t.innerText = msg;
+        container.appendChild(t);
+        setTimeout(() => t.remove(), 3000);
+    },
+
+    playVibration(ms) {
+        if (this.state.settings.vibration && navigator.vibrate) {
+            try { navigator.vibrate(ms); } catch(e){}
+        }
+    },
+
+    playSound(type) {
+        if (!this.state.settings.sound) return;
+        try {
+            if (!this.audioCtx) this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            if (this.audioCtx.state === 'suspended') this.audioCtx.resume();
+            
+            const osc = this.audioCtx.createOscillator();
+            const gain = this.audioCtx.createGain();
+            osc.connect(gain); gain.connect(this.audioCtx.destination);
+            const now = this.audioCtx.currentTime;
+            
+            if (type === 'tengo') {
+                osc.type = 'sine'; osc.frequency.setValueAtTime(600, now); osc.frequency.exponentialRampToValueAtTime(1200, now + 0.1);
+                gain.gain.setValueAtTime(0.1, now); gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
+                osc.start(now); osc.stop(now + 0.1);
+            } else if (type === 'dup') {
+                osc.type = 'square'; osc.frequency.setValueAtTime(400, now); osc.frequency.exponentialRampToValueAtTime(300, now + 0.1);
+                gain.gain.setValueAtTime(0.05, now); gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
+                osc.start(now); osc.stop(now + 0.1);
+            } else { 
+                osc.type = 'triangle'; osc.frequency.setValueAtTime(800, now);
+                gain.gain.setValueAtTime(0.05, now); gain.gain.exponentialRampToValueAtTime(0.01, now + 0.05);
+                osc.start(now); osc.stop(now + 0.05);
+            }
+        } catch(e) {}
+    },
+
+    triggerConfetti() {
+        if (!this.state.settings.animations) return;
+        const canvas = document.getElementById('confetti-canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+        const pieces = []; const colors = ['#C6FF3D', '#D6A93A', '#3CAC3B', '#E61D25', '#F8FAFC'];
+        for(let i=0; i<100; i++) {
+            pieces.push({
+                x: canvas.width/2, y: canvas.height/2 + 100,
+                vx: (Math.random()-0.5)*20, vy: (Math.random()-1)*20 - 5,
+                size: Math.random()*8+4, color: colors[Math.floor(Math.random()*colors.length)]
+            });
+        }
+        const loop = () => {
+            ctx.clearRect(0,0,canvas.width,canvas.height);
+            let active = false;
+            pieces.forEach(p => {
+                p.x += p.vx; p.y += p.vy; p.vy += 0.5;
+                if (p.y < canvas.height) active = true;
+                ctx.fillStyle = p.color; ctx.beginPath(); ctx.arc(p.x, p.y, p.size, 0, Math.PI*2); ctx.fill();
+            });
+            if (active) requestAnimationFrame(loop); else ctx.clearRect(0,0,canvas.width,canvas.height);
+        };
+        loop();
+    },
+
+    initPWA() {
+        const manifestData = {
+            name: "Sticker Cup 2026", short_name: "StickerCup", start_url: ".", display: "standalone",
+            background_color: "#07111F", theme_color: "#07111F", description: "Tracker Manual de Álbum",
+            icons: [{ src: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="%2307111F"/><text x="50" y="60" font-size="40" fill="%23D6A93A" text-anchor="middle">SC</text></svg>', sizes: "192x192", type: "image/svg+xml", purpose: "any maskable" }]
+        };
+        const manifestBlob = new Blob([JSON.stringify(manifestData)], {type: 'application/json'});
+        document.getElementById('manifest-link').href = URL.createObjectURL(manifestBlob);
+
+        // Registro de Service Worker solo en contexto seguro (evita errores en archivo local file://)
+        if ('serviceWorker' in navigator && location.protocol !== 'file:') {
+            navigator.serviceWorker.register('./service-worker.js').catch(err => console.log('Info: SW omitido (requiere server).'));
+        }
+    }
+};
+
+window.addEventListener('DOMContentLoaded', () => app.init());
+</script>
+</body>
+</html>
