@@ -847,6 +847,253 @@
             box-shadow: 0 0 18px rgba(56,189,248,.28) !important;
         }
 
+
+
+        /* =========================================
+           CÁMARA / OCR ASISTIDO
+           ========================================= */
+        .camera-box {
+            background: rgba(7,17,31,.74);
+            border: 1px solid rgba(255,255,255,.18);
+            border-radius: 10px;
+            padding: 16px;
+            box-shadow: 0 18px 45px rgba(0,0,0,.25);
+            margin-bottom: 16px;
+        }
+        .camera-frame {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 3 / 4;
+            background: rgba(0,0,0,.38);
+            border: 1px solid rgba(255,255,255,.14);
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 14px 0;
+        }
+        #camera-video {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: block;
+            background: #02050A;
+            transform-origin: center center;
+            transition: transform .18s ease;
+        }
+        .camera-scan-line {
+            position: absolute;
+            left: 8%; right: 8%; top: 50%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--lime), transparent);
+            box-shadow: 0 0 18px rgba(198,255,61,.52);
+            animation: scanLine 1.8s ease-in-out infinite alternate;
+            pointer-events: none;
+        }
+        .camera-target {
+            position: absolute;
+            inset: 20%;
+            border: 1px solid rgba(255,255,255,.22);
+            border-radius: 10px;
+            box-shadow: inset 0 0 0 1px rgba(0,0,0,.18);
+            pointer-events: none;
+        }
+        @keyframes scanLine { from { transform: translateY(-90px); opacity: .55; } to { transform: translateY(90px); opacity: 1; } }
+        .camera-status {
+            color: rgba(255,255,255,.82);
+            font-size: .92rem;
+            line-height: 1.45;
+            min-height: 22px;
+        }
+        .camera-status strong { color: var(--lime); }
+        .camera-status.warn strong { color: var(--orange); }
+        .camera-status.err strong { color: var(--red); }
+        .camera-result-list {
+            display: grid;
+            gap: 10px;
+            margin-top: 12px;
+        }
+        .camera-result {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            padding: 12px;
+            border-radius: 10px;
+            border: 1px solid rgba(255,255,255,.12);
+            background: rgba(0,0,0,.20);
+        }
+        .camera-result-main { min-width: 0; }
+        .camera-code { font-weight: 900; color: var(--white); font-size: 1.05rem; }
+        .camera-name { color: var(--gray); font-size: .82rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 190px; }
+        .camera-pill {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 8px;
+            border-radius: 999px;
+            font-size: .72rem;
+            font-weight: 800;
+            margin-top: 5px;
+        }
+        .camera-pill.new { background: rgba(198,255,61,.16); color: var(--lime); }
+        .camera-pill.owned { background: rgba(255,122,26,.16); color: var(--orange); }
+        .camera-mini-btn {
+            flex: 0 0 auto;
+            padding: 9px 10px;
+            border-radius: 9px;
+            background: linear-gradient(135deg, #B6FF00, #F8FAFC);
+            color: #07111F;
+            font-weight: 800;
+            font-size: .82rem;
+        }
+        .camera-help {
+            color: var(--gray);
+            font-size: .86rem;
+            line-height: 1.45;
+            margin-bottom: 12px;
+        }
+        .camera-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        @media (max-width: 420px) {
+            .camera-actions { grid-template-columns: 1fr; }
+            .camera-name { max-width: 160px; }
+        }
+
+
+        /* Cámara v15: marco para el dorso completo + foco real en código superior derecho */
+        .camera-frame {
+            aspect-ratio: 3 / 4;
+            background:
+                radial-gradient(circle at center, rgba(198,255,61,.08), transparent 35%),
+                rgba(0,0,0,.48);
+        }
+        .camera-frame:not(.scanning) .camera-scan-line {
+            opacity: 0;
+            animation: none;
+        }
+        .camera-frame.scanning .camera-scan-line {
+            opacity: 1;
+            animation: scanLineBox 1.55s ease-in-out infinite alternate;
+        }
+        .camera-target {
+            left: 9%;
+            right: 9%;
+            top: 8%;
+            bottom: auto;
+            height: 74%;
+            border: 2px solid rgba(255,255,255,.48);
+            border-radius: 8px;
+            box-shadow:
+                0 0 0 999px rgba(0,0,0,.30),
+                0 0 22px rgba(198,255,61,.12),
+                inset 0 0 0 1px rgba(255,255,255,.08);
+        }
+        .camera-target::before {
+            content: "Alineá el código grande acá";
+            position: absolute;
+            right: 2%;
+            top: -30px;
+            color: rgba(255,255,255,.92);
+            font-size: .76rem;
+            font-weight: 800;
+            white-space: nowrap;
+            text-shadow: 0 2px 10px rgba(0,0,0,.7);
+        }
+        .camera-target::after {
+            content: "";
+            position: absolute;
+            top: 4%;
+            right: 3%;
+            width: 42%;
+            height: 18%;
+            border-radius: 10px;
+            border: 3px solid rgba(198,255,61,.92);
+            box-shadow: 0 0 24px rgba(198,255,61,.24), inset 0 0 0 1px rgba(0,0,0,.18);
+            background: rgba(198,255,61,.04);
+        }
+        @keyframes scanLineBox {
+            from { transform: translateY(-34px); opacity: .45; }
+            to { transform: translateY(34px); opacity: 1; }
+        }
+        .camera-scan-line {
+            left: 54%;
+            right: 12%;
+            top: 19%;
+            transition: opacity .18s ease;
+        }
+        .camera-last-read {
+            margin-top: 10px;
+            padding: 10px 12px;
+            border: 1px solid rgba(255,255,255,.10);
+            border-radius: 10px;
+            background: rgba(0,0,0,.20);
+            color: var(--gray);
+            font-size: .86rem;
+            line-height: 1.4;
+        }
+        .camera-last-read strong { color: var(--white); }
+
+
+        /* Cámara v16: menos zoom, más foco y lectura manual puntual */
+        .camera-actions-3 { grid-template-columns: 1fr 1fr 1fr; }
+        .camera-focus-note {
+            color: rgba(255,255,255,.74);
+            font-size: .82rem;
+            line-height: 1.35;
+            margin: -4px 0 10px;
+        }
+        .camera-zoom-control {
+            margin: 12px 0 10px;
+            padding: 12px;
+            border-radius: 10px;
+            border: 1px solid rgba(255,255,255,.12);
+            background: rgba(0,0,0,.18);
+        }
+        .camera-zoom-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            color: rgba(255,255,255,.84);
+            font-size: .84rem;
+            font-weight: 800;
+            margin-bottom: 8px;
+        }
+        .camera-zoom-head span:last-child { color: var(--lime); font-variant-numeric: tabular-nums; }
+        .camera-zoom-slider {
+            width: 100%;
+            accent-color: var(--lime);
+        }
+        .camera-zoom-hint {
+            color: rgba(255,255,255,.62);
+            font-size: .76rem;
+            line-height: 1.35;
+            margin-top: 7px;
+        }
+        .camera-target {
+            left: 7%;
+            right: 7%;
+            top: 6%;
+            height: 80%;
+        }
+        .camera-target::before {
+            content: "Código grande arriba a la derecha";
+            top: -28px;
+            right: 1%;
+        }
+        .camera-target::after {
+            top: 3%;
+            right: 2%;
+            width: 50%;
+            height: 22%;
+            border-width: 3px;
+        }
+        .camera-scan-line {
+            left: 45%;
+            right: 8%;
+            top: 20%;
+        }
+        @media (max-width: 420px) {
+            .camera-actions-3 { grid-template-columns: 1fr; }
+        }
+
         @media (prefers-reduced-motion: reduce) {
             *, *::before, *::after {
                 animation-duration: .001ms !important;
@@ -861,6 +1108,7 @@
 
 <!-- BASE DE DATOS REAL EXTERNA -->
 <script src="albumData.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 
 <div class="app-container" id="app-container">
     <canvas id="confetti-canvas"></canvas>
@@ -949,6 +1197,45 @@
                 </button>
             </div>
 
+
+            <!-- VIEW: CÁMARA -->
+            <div id="view-camera" class="view-section">
+                <h3 style="margin-bottom: 10px; color: var(--gold);">Cámara</h3>
+                <p class="camera-help">Poné <strong>una figurita de dorso</strong> dentro del marco. No la acerques tanto: dejala a unos <strong>15–25 cm</strong>, con buena luz, y que se vea nítido el código grande tipo <strong>FWC7</strong>, <strong>ARG-01</strong> o <strong>MEX15</strong>.</p>
+
+                <div class="camera-box">
+                    <div class="camera-actions camera-actions-3">
+                        <button class="btn-primary" onclick="app.startCameraScanner()" style="margin-bottom:0;">📷 Abrir cámara</button>
+                        <button class="btn-secondary" onclick="app.scanCameraFrame(true)" style="margin-bottom:0;">📸 Leer ahora</button>
+                        <button class="btn-secondary" onclick="app.stopCameraScanner()" style="margin-bottom:0;">Detener</button>
+                    </div>
+                    <div class="camera-frame">
+                        <video id="camera-video" playsinline webkit-playsinline muted autoplay></video>
+                        <canvas id="camera-canvas" style="display:none;"></canvas>
+                        <div class="camera-target"></div>
+                        <div class="camera-scan-line"></div>
+                    </div>
+                    <div class="camera-zoom-control">
+                        <div class="camera-zoom-head"><span>Zoom / distancia</span><span id="camera-zoom-label">1.0x</span></div>
+                        <input id="camera-zoom-slider" class="camera-zoom-slider" type="range" min="1" max="1" step="0.1" value="1" oninput="app.setCameraZoom(this.value)">
+                        <div class="camera-zoom-hint">Dejalo en 1x para alejar y enfocar mejor. Subí apenas si el código queda muy chico.</div>
+                    </div>
+                    <div class="camera-focus-note">Tip: si se desenfoca, bajá el zoom a 1x, alejála un poco y tocá “Leer ahora” cuando el código se vea nítido.</div>
+                    <div id="camera-status" class="camera-status">Cámara detenida. Tocá “Abrir cámara” para empezar.</div>
+                    <div id="camera-last-read" class="camera-last-read">Última lectura: <strong>ninguna</strong></div>
+                </div>
+
+
+                <div class="camera-box">
+                    <div class="exchange-title" style="margin-bottom:8px;">Lecturas</div>
+                    <div id="camera-results" class="camera-result-list"><p style="color:var(--gray);">Todavía no hay códigos detectados.</p></div>
+                    <div class="camera-actions" style="margin-top:14px;">
+                        <button class="btn-primary" onclick="app.applyCameraScans('tengo')" style="margin-bottom:0;">Marcar nuevas como tengo</button>
+                        <button class="btn-secondary" onclick="app.applyCameraScans('repetida')" style="margin-bottom:0; border-color:var(--orange); color:var(--orange);">Sumar como repetidas</button>
+                    </div>
+                </div>
+            </div>
+
             <!-- VIEW: AJUSTES -->
             <div id="view-settings" class="view-section">
                 <h3 style="margin-bottom: 20px; color: var(--gold);">Preferencias</h3>
@@ -983,6 +1270,7 @@
             <div class="nav-item" onclick="app.switchView('dashboard')" id="nav-dashboard"><svg viewBox="0 0 24 24"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg><span>Stats</span></div>
             <div class="nav-item" onclick="app.switchView('swap')" id="nav-swap"><svg viewBox="0 0 24 24"><path d="M16 11V5.5l-6 4.5 6 4.5V11zM8 13v5.5l6-4.5-6-4.5V13z"/></svg><span>Listas</span></div>
             <div class="nav-item" onclick="app.switchView('quick')" id="nav-quick"><svg viewBox="0 0 24 24"><path d="M19 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-2 10h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/></svg><span>Rápido</span></div>
+            <div class="nav-item" onclick="app.switchView('camera')" id="nav-camera"><svg viewBox="0 0 24 24"><path d="M12 15.2A3.2 3.2 0 1 0 12 8.8a3.2 3.2 0 0 0 0 6.4zm8-10.2h-3.17l-1.84-2H9.01L7.17 5H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm-8 13a5 5 0 1 1 0-10 5 5 0 0 1 0 10z"/></svg><span>Cámara</span></div>
             <div class="nav-item" onclick="app.switchView('settings')" id="nav-settings"><svg viewBox="0 0 24 24"><path d="M19.14,12.94c0.04-0.3,0.06-0.61,0.06-0.94c0-0.32-0.02-0.64-0.06-0.94l2.03-1.58c0.18-0.14,0.23-0.41,0.12-0.61 l-1.92-3.32c-0.12-0.22-0.37-0.29-0.59-0.22l-2.39,0.96c-0.5-0.38-1.03-0.7-1.62-0.94L14.4,2.81c-0.04-0.24-0.24-0.41-0.48-0.41 h-3.84c-0.24,0-0.43,0.17-0.47,0.41L9.25,5.35C8.66,5.59,8.12,5.92,7.63,6.29L5.24,5.33c-0.22-0.08-0.47,0-0.59,0.22L2.73,8.87 C2.62,9.08,2.66,9.34,2.86,9.48l2.03,1.58C4.84,11.36,4.8,11.69,4.8,12s0.02,0.64,0.06,0.94l-2.03,1.58 c-0.18,0.14-0.23,0.41-0.12,0.61l1.92,3.32c0.12,0.22,0.37,0.29,0.59,0.22l2.39-0.96c0.5,0.38,1.03,0.7,1.62,0.94l0.36,2.54 c0.05,0.24,0.24,0.41,0.48,0.41h3.84c0.24,0,0.43-0.17,0.47-0.41l0.36-2.54c0.59-0.24,1.13-0.56,1.62-0.94l2.39,0.96 c0.22,0.08,0.47,0,0.59-0.22l1.92-3.32c0.12-0.22,0.07-0.49-0.12-0.61L19.14,12.94z M12,15.6c-1.98,0-3.6-1.62-3.6-3.6 s1.62-3.6,3.6-3.6s3.6,1.62,3.6,3.6S13.98,15.6,12,15.6z"/></svg><span>Ajustes</span></div>
         </nav>
 
@@ -1051,7 +1339,7 @@ const app = {
         settings: { sound: true, vibration: true, animations: true }
     },
     openSections: new Set(), // Registro para no cerrar los países
-    currentFilter: 'all', currentSearch: '', selectedStickerId: null, audioCtx: null,
+    currentFilter: 'all', currentSearch: '', selectedStickerId: null, audioCtx: null, cameraStream: null, cameraTimer: null, cameraBusy: false, cameraScans: [], cameraZoom: 1, cameraZoomMin: 1, cameraZoomMax: 1, cameraZoomSupported: false,
     touchTimer: null, isLongPress: false,
     keys: { user: 'stickerCup2026_state_v1', settings: 'stickerCup2026_settings_v1' },
 
@@ -1136,6 +1424,7 @@ const app = {
     // RENDERING DE VISTAS
     // =========================================
     switchView(viewId) {
+        if (viewId !== 'camera') this.stopCameraScanner(false);
         document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
         document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
         
@@ -1415,13 +1704,424 @@ const app = {
     },
 
     // =========================================
+    // CÁMARA / OCR ASISTIDO
+    // =========================================
+    setCameraStatus(message, type = '') {
+        const el = document.getElementById('camera-status');
+        if (!el) return;
+        el.className = `camera-status ${type || ''}`.trim();
+        el.innerHTML = message;
+    },
+
+    async startCameraScanner() {
+        const video = document.getElementById('camera-video');
+        if (!video) return;
+
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+            this.setCameraStatus('<strong>Tu navegador no permite abrir cámara desde esta web.</strong> Probá en Chrome/Safari actualizado y con HTTPS.', 'err');
+            return;
+        }
+
+        if (!window.isSecureContext && location.hostname !== 'localhost') {
+            this.setCameraStatus('<strong>La cámara necesita HTTPS.</strong> Abrí la app desde el link seguro con https://', 'err');
+            return;
+        }
+
+        try {
+            this.stopCameraScanner(false);
+            this.setCameraStatus('<strong>Abriendo cámara...</strong> Aceptá el permiso del navegador.', '');
+
+            const constraints = {
+                audio: false,
+                video: {
+                    facingMode: { ideal: 'environment' },
+                    width: { ideal: 1920 },
+                    height: { ideal: 1080 },
+                    frameRate: { ideal: 30, max: 30 }
+                }
+            };
+
+            this.cameraStream = await navigator.mediaDevices.getUserMedia(constraints);
+            video.srcObject = this.cameraStream;
+            video.setAttribute('playsinline', 'true');
+            video.setAttribute('webkit-playsinline', 'true');
+            video.muted = true;
+            await video.play();
+            await this.tuneCameraTrack();
+
+            document.querySelector('.camera-frame')?.classList.add('scanning');
+            this.setCameraStatus('<strong>Cámara activa.</strong> Alejá un poco la figurita hasta que el código se vea nítido. También podés tocar “Leer ahora”.', '');
+            this.showToast('Cámara activa');
+            this.playVibration(20);
+
+            this.cameraBusy = false;
+            clearInterval(this.cameraTimer);
+            this.cameraTimer = setInterval(() => this.scanCameraFrame(false), 2600);
+            setTimeout(() => this.scanCameraFrame(false), 1200);
+        } catch (err) {
+            console.error('Camera error:', err);
+            let msg = 'No pude abrir la cámara.';
+            if (err && err.name === 'NotAllowedError') msg = 'Permiso de cámara denegado. Revisá permisos del sitio en el navegador.';
+            if (err && err.name === 'NotFoundError') msg = 'No encontré una cámara disponible.';
+            if (err && err.name === 'NotReadableError') msg = 'La cámara está ocupada por otra app o pestaña.';
+            this.setCameraStatus(`<strong>${msg}</strong> Probá cerrar y volver a abrir la cámara.`, 'err');
+        }
+    },
+
+    async tuneCameraTrack() {
+        try {
+            if (!this.cameraStream) return;
+            const track = this.cameraStream.getVideoTracks()[0];
+            const video = document.getElementById('camera-video');
+            const slider = document.getElementById('camera-zoom-slider');
+            const label = document.getElementById('camera-zoom-label');
+
+            this.cameraZoom = 1;
+            this.cameraZoomMin = 1;
+            this.cameraZoomMax = 1;
+            this.cameraZoomSupported = false;
+
+            if (video) video.style.transform = 'scale(1)';
+
+            if (track && track.getCapabilities) {
+                const caps = track.getCapabilities();
+                const advanced = [];
+                if (caps.focusMode && caps.focusMode.includes('continuous')) advanced.push({ focusMode: 'continuous' });
+                if (caps.exposureMode && caps.exposureMode.includes('continuous')) advanced.push({ exposureMode: 'continuous' });
+                if (caps.whiteBalanceMode && caps.whiteBalanceMode.includes('continuous')) advanced.push({ whiteBalanceMode: 'continuous' });
+
+                if (caps.zoom && typeof caps.zoom.min === 'number' && typeof caps.zoom.max === 'number') {
+                    this.cameraZoomSupported = true;
+                    this.cameraZoomMin = caps.zoom.min;
+                    this.cameraZoomMax = Math.min(caps.zoom.max, Math.max(caps.zoom.min, 3));
+                    this.cameraZoom = caps.zoom.min;
+                    advanced.push({ zoom: caps.zoom.min });
+                }
+
+                if (advanced.length) await track.applyConstraints({ advanced });
+            }
+
+            if (slider) {
+                slider.min = this.cameraZoomSupported ? this.cameraZoomMin : 1;
+                slider.max = this.cameraZoomSupported ? this.cameraZoomMax : 1.6;
+                slider.step = this.cameraZoomSupported ? 0.1 : 0.05;
+                slider.value = this.cameraZoomSupported ? this.cameraZoomMin : 1;
+                slider.disabled = false;
+            }
+            if (label) label.innerText = `${Number(slider?.value || 1).toFixed(1)}x`;
+        } catch(e) {
+            console.log('Camera tuning unavailable:', e);
+        }
+    },
+
+    async setCameraZoom(value) {
+        const zoom = Number(value) || 1;
+        this.cameraZoom = zoom;
+        const label = document.getElementById('camera-zoom-label');
+        const video = document.getElementById('camera-video');
+        if (label) label.innerText = `${zoom.toFixed(1)}x`;
+
+        try {
+            if (this.cameraStream && this.cameraZoomSupported) {
+                const track = this.cameraStream.getVideoTracks()[0];
+                await track.applyConstraints({ advanced: [{ zoom }] });
+                if (video) video.style.transform = 'scale(1)';
+            } else if (video) {
+                // Fallback visual: no mejora el foco, pero permite ampliar un poco si el navegador no expone zoom real.
+                video.style.transform = `scale(${zoom})`;
+            }
+        } catch(e) {
+            console.log('Zoom unavailable:', e);
+            if (video) video.style.transform = `scale(${Math.min(Math.max(zoom, 1), 1.4)})`;
+        }
+    },
+
+    stopCameraScanner(showMsg = true) {
+        clearInterval(this.cameraTimer);
+        this.cameraTimer = null;
+        this.cameraBusy = false;
+        const video = document.getElementById('camera-video');
+        if (this.cameraStream) {
+            this.cameraStream.getTracks().forEach(track => track.stop());
+            this.cameraStream = null;
+        }
+        document.querySelector('.camera-frame')?.classList.remove('scanning');
+        if (video) {
+            video.pause();
+            video.srcObject = null;
+            video.removeAttribute('src');
+            video.style.transform = 'scale(1)';
+            video.load?.();
+        }
+        const slider = document.getElementById('camera-zoom-slider');
+        const label = document.getElementById('camera-zoom-label');
+        if (slider) slider.value = 1;
+        if (label) label.innerText = '1.0x';
+        if (showMsg) this.setCameraStatus('Cámara detenida. Tocá “Abrir cámara” para volver a escanear.', 'warn');
+    },
+
+    async scanCameraFrame(force = false) {
+        if (this.cameraBusy || !this.cameraStream) { if (force) this.setCameraStatus('<strong>Primero abrí la cámara.</strong>', 'warn'); return; }
+        const video = document.getElementById('camera-video');
+        const canvas = document.getElementById('camera-canvas');
+        if (!video || !canvas || video.readyState < 2) return;
+
+        if (!window.Tesseract) {
+            this.setCameraStatus('<strong>OCR cargando...</strong> Esperá unos segundos y mantené el código dentro del recuadro.', 'warn');
+            return;
+        }
+
+        this.cameraBusy = true;
+        try {
+            const vw = video.videoWidth || 1280;
+            const vh = video.videoHeight || 720;
+
+            // v17: leemos una zona más amplia y alejada. El video usa object-fit: contain
+            // para que la cámara no se sienta tan pegada; el usuario puede ajustar zoom real con el slider.
+            const cropW = Math.floor(vw * 0.82);
+            const cropH = Math.floor(vh * 0.36);
+            const sx = Math.floor(vw * 0.16);
+            const sy = Math.floor(vh * 0.02);
+
+            canvas.width = Math.min(1900, cropW * 3.6);
+            canvas.height = Math.floor(canvas.width * cropH / cropW);
+            const ctx = canvas.getContext('2d', { willReadFrequently: true });
+            ctx.imageSmoothingEnabled = false;
+            ctx.drawImage(video, sx, sy, cropW, cropH, 0, 0, canvas.width, canvas.height);
+
+            // Alto contraste suave: mejora FWC7 sin destruir letras borrosas.
+            const img = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            const d = img.data;
+            let avg = 0;
+            for (let i = 0; i < d.length; i += 4) avg += (d[i] * .299 + d[i+1] * .587 + d[i+2] * .114);
+            avg = avg / (d.length / 4);
+            const threshold = Math.max(92, Math.min(160, avg * 0.88));
+            for (let i = 0; i < d.length; i += 4) {
+                const gray = (d[i] * .299 + d[i+1] * .587 + d[i+2] * .114);
+                const boosted = gray > threshold ? 255 : Math.max(0, gray * .35);
+                d[i] = d[i+1] = d[i+2] = boosted;
+            }
+            ctx.putImageData(img, 0, 0);
+
+            this.setCameraStatus(force ? '<strong>Leyendo ahora...</strong> Mantené la figurita quieta.' : '<strong>Escaneando código superior...</strong> Si se desenfoca, alejála un poco.', '');
+            const res = await Tesseract.recognize(canvas, 'eng', {
+                tessedit_char_whitelist: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789- ',
+                preserve_interword_spaces: '1',
+                tessedit_pageseg_mode: '7',
+                logger: () => {}
+            });
+            const text = res?.data?.text || '';
+            const codes = this.extractCodesFromText(text);
+            if (codes.length) {
+                this.handleCameraCodes(codes);
+            } else {
+                this.setCameraStatus('<strong>No leí ningún código todavía.</strong> Alejá un poco la figurita, buscá buena luz y tocá “Leer ahora” cuando el código se vea nítido.', 'warn');
+            }
+        } catch (err) {
+            console.error('OCR error:', err);
+            this.setCameraStatus('<strong>No pude leer el código automáticamente.</strong> Probá más luz, alejála un poco para que enfoque y tocá “Leer ahora”.', 'warn');
+        } finally {
+            this.cameraBusy = false;
+        }
+    },
+
+    handleCameraCodes(codes) {
+        const best = this.pickBestCameraCode(codes);
+        if (!best) {
+            this.setCameraStatus('<strong>Leí texto, pero no coincidió con un código del álbum.</strong> Ajustá la figurita dentro del recuadro.', 'warn');
+            return;
+        }
+        this.addCameraScan(best, false);
+        this.renderCameraResults();
+    },
+
+    pickBestCameraCode(codes) {
+        const valid = [];
+        codes.forEach((raw, idx) => {
+            const sticker = this.findStickerByToken(raw);
+            if (!sticker) return;
+            const code = this.normalizeInputCode(raw);
+            const normalizedSticker = this.normalizeInputCode(sticker.code || sticker.id);
+            const prefix = String(normalizedSticker).split('-')[0];
+            let score = 100 - idx;
+            if (code === normalizedSticker) score += 35;
+            if (['FWC','CC','00'].includes(prefix)) score += 25;
+            if (/^[A-Z]{2,4}-?\d{1,2}$/.test(String(raw).toUpperCase().replace(/\s+/g,''))) score += 15;
+            valid.push({ code: sticker.code || normalizedSticker, score, sticker });
+        });
+        valid.sort((a,b) => b.score - a.score);
+        return valid[0]?.code || null;
+    },
+
+    updateCameraLastRead(message) {
+        const el = document.getElementById('camera-last-read');
+        if (el) el.innerHTML = message;
+    },
+
+    addCameraScan(rawCode, fromManual = false) {
+        const code = this.normalizeInputCode(rawCode);
+        const sticker = this.findStickerByToken(code);
+        if (!sticker) {
+            this.setCameraStatus(`<strong>${this.escapeCameraHTML(code)}</strong> no está en el álbum. Revisá si el OCR leyó mal.`, 'err');
+            return false;
+        }
+
+        const alreadyInList = this.cameraScans.some(s => s.id === sticker.id);
+        const u = this.getUserObj(sticker.id);
+        const status = u.owned ? 'owned' : 'new';
+        if (!alreadyInList) {
+            this.cameraScans.unshift({
+                id: sticker.id,
+                code: sticker.code,
+                name: sticker.name,
+                section: sticker.section,
+                status,
+                at: Date.now()
+            });
+            this.cameraScans = this.cameraScans.slice(0, 30);
+        }
+
+        if (status === 'owned') {
+            this.setCameraStatus(`<strong>${sticker.code} ya la tenés.</strong> Si es otra copia, podés sumarla como repetida.`, 'warn');
+            this.updateCameraLastRead(`Última lectura: <strong>${this.escapeCameraHTML(sticker.code)}</strong> · ya la tenés`);
+            this.playSound('dup');
+        } else {
+            this.setCameraStatus(`<strong>${sticker.code} es nueva. Qué bueno.</strong> Tocá “Marcar nuevas como tengo”.`, '');
+            this.updateCameraLastRead(`Última lectura: <strong>${this.escapeCameraHTML(sticker.code)}</strong> · nueva`);
+            this.playSound('tengo');
+        }
+        this.playVibration(status === 'owned' ? [20, 30, 20] : 25);
+        return true;
+    },
+
+    // El ingreso manual vive en la pestaña Rápido; acá dejamos solo cámara.
+
+    clearCameraScans() {
+        this.cameraScans = [];
+        this.renderCameraResults();
+        this.setCameraStatus('Lista limpia. Podés seguir escaneando.', '');
+        this.updateCameraLastRead('Última lectura: <strong>ninguna</strong>');
+    },
+
+    applyCameraScans(action) {
+        if (!this.cameraScans.length) {
+            this.showToast('No hay lecturas para aplicar');
+            return;
+        }
+        let count = 0;
+        this.cameraScans.forEach(item => {
+            const u = this.getUserObj(item.id);
+            if (action === 'tengo') {
+                if (!u.owned) {
+                    u.owned = true;
+                    count++;
+                }
+            } else if (action === 'repetida') {
+                u.owned = true;
+                u.duplicates = (u.duplicates || 0) + 1;
+                count++;
+            }
+            u.updatedAt = new Date().toISOString();
+        });
+        this.saveUser();
+        this.renderAlbum();
+        this.updateDashboard();
+        this.cameraScans = [];
+        this.renderCameraResults();
+        this.playSound(action === 'repetida' ? 'dup' : 'tengo');
+        this.showToast(action === 'repetida' ? `➕ ${count} repetidas sumadas` : `✅ ${count} nuevas marcadas`);
+        this.setCameraStatus('Cambios aplicados. Podés seguir escaneando.', '');
+    },
+
+    renderCameraResults() {
+        const box = document.getElementById('camera-results');
+        if (!box) return;
+        if (!this.cameraScans.length) {
+            box.innerHTML = '<p style="color:var(--gray);">Todavía no hay códigos detectados.</p>';
+            return;
+        }
+        box.innerHTML = this.cameraScans.map(item => {
+            const label = item.status === 'owned' ? 'Ya la tenés' : 'Nueva';
+            const cls = item.status === 'owned' ? 'owned' : 'new';
+            return `
+                <div class="camera-result">
+                    <div class="camera-result-main">
+                        <div class="camera-code">${this.escapeCameraHTML(item.code)}</div>
+                        <div class="camera-name">${this.escapeCameraHTML(item.name)} · ${this.escapeCameraHTML(item.section || '')}</div>
+                    </div>
+                    <span class="camera-pill ${cls}">${label}</span>
+                </div>
+            `;
+        }).join('');
+    },
+
+    escapeCameraHTML(str) {
+        return String(str ?? '').replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
+    },
+
+    // =========================================
     // LISTAS Y MODO RÁPIDO
     // =========================================
     normalizeInputCode(input) {
-        let upper = input.toUpperCase().replace(/\s+/g, '');
-        let match = upper.match(/^([A-Z]+)-?(\d+)$/);
+        let upper = String(input || '').toUpperCase().replace(/\s+/g, '').replace(/[–—]/g, '-');
+        if (upper === '00') return '00';
+        let match = upper.match(/^([A-Z]+)-?0*(\d{1,3})$/);
         if (match) return `${match[1]}-${parseInt(match[2], 10)}`;
         return upper;
+    },
+
+    getCodeVariants(input) {
+        const normalized = this.normalizeInputCode(input);
+        const variants = new Set([normalized, String(input || '').toUpperCase().replace(/\s+/g,'')]);
+        const m = normalized.match(/^([A-Z]+)-(\d{1,3})$/);
+        if (m) {
+            const n = parseInt(m[2], 10);
+            variants.add(`${m[1]}-${n}`);
+            variants.add(`${m[1]}-${String(n).padStart(2,'0')}`);
+            variants.add(`${m[1]}${n}`);
+            variants.add(`${m[1]}${String(n).padStart(2,'0')}`);
+        }
+        return [...variants].map(v => v.toUpperCase());
+    },
+
+    findStickerByToken(token) {
+        const variants = this.getCodeVariants(token);
+        return this.state.albumData.find(s => {
+            const values = [s.id, s.code, s.rawText].filter(Boolean).map(v => String(v).toUpperCase().replace(/\s+/g,''));
+            const normalizedValues = values.flatMap(v => this.getCodeVariants(v));
+            return variants.some(v => normalizedValues.includes(v));
+        });
+    },
+
+    extractCodesFromText(text) {
+        const raw = String(text || '').toUpperCase()
+            .replace(/[–—_]/g, '-')
+            .replace(/O/g, '0')
+            .replace(/[|]/g, '1');
+        const compact = raw.replace(/[^A-Z0-9-]+/g, ' ');
+        const glued = raw.replace(/[^A-Z0-9-]/g, '');
+        const prefixes = [...new Set(this.state.albumData.map(s => String(s.prefix || s.code || s.id || '').split('-')[0].replace(/\d+/g,'').toUpperCase()).filter(Boolean))];
+        const found = [];
+        const add = (code) => {
+            const normalized = this.normalizeInputCode(code);
+            if (!this.findStickerByToken(normalized)) return;
+            if (!found.includes(normalized)) found.push(normalized);
+        };
+
+        // En el dorso real suele venir FWC7 / FWC 7 arriba a la derecha. Priorizamos ese patrón.
+        ['FWC','CC', ...prefixes.filter(p => !['FWC','CC','00'].includes(p))].forEach(prefix => {
+            if (!prefix || prefix === '00') return;
+            const p = prefix.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+            const spaced = new RegExp(`\\b${p}\\s*-?\\s*0?([0-9]{1,3})\\b`, 'g');
+            let m;
+            while ((m = spaced.exec(compact)) !== null) add(`${prefix}-${parseInt(m[1],10)}`);
+
+            const gluedRe = new RegExp(`${p}-?0?([0-9]{1,3})`, 'g');
+            while ((m = gluedRe.exec(glued)) !== null) add(`${prefix}-${parseInt(m[1],10)}`);
+        });
+
+        if (/\b00\b/.test(compact) || /^00/.test(glued)) add('00');
+        return found.slice(0, 1);
     },
 
     processQuickAdd(action) {
@@ -1432,7 +2132,7 @@ const app = {
         let count = 0; let notFound = [];
 
         rawTokens.forEach(token => {
-            let match = this.state.albumData.find(s => s.id.toUpperCase() === token || s.code.toUpperCase() === token);
+            let match = this.findStickerByToken(token);
             if (!match && !isNaN(token)) {
                 const numMatches = this.state.albumData.filter(s => s.number == parseInt(token));
                 if (numMatches.length === 1) match = numMatches[0];
@@ -1632,7 +2332,7 @@ const app = {
     initPWA() {
         const manifestData = {
             name: "FiguritApp", short_name: "FiguritApp", start_url: ".", display: "standalone",
-            background_color: "#07111F", theme_color: "#07111F", description: "Tracker Manual de Álbum",
+            background_color: "#07111F", theme_color: "#07111F", description: "Tracker Manual de Álbum con cámara asistida",
             icons: [
                 { src: 'icon.png', sizes: '192x192', type: 'image/png', purpose: 'any maskable' },
                 { src: 'icon.png', sizes: '512x512', type: 'image/png', purpose: 'any maskable' }
