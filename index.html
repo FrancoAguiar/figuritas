@@ -280,6 +280,7 @@
         .btn-action:active { transform: scale(0.97); background: rgba(255,255,255,0.15); }
         .btn-action.add { background: rgba(255, 122, 26, 0.15); border-color: rgba(255, 122, 26, 0.5); color: var(--orange); }
         .btn-action.res { background: rgba(42, 57, 141, 0.2); border-color: rgba(42, 57, 141, 0.5); color: #8ea0ff; }
+        .btn-action.del { background: transparent; border-color: rgba(255,255,255,0.1); color: var(--gray); font-size: 1rem; margin-top: 10px;}
 
         .settings-row { display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-bottom: 1px solid var(--glass-border); }
         .toggle { position: relative; display: inline-block; width: 50px; height: 28px; }
@@ -299,8 +300,7 @@
 </head>
 <body>
 
-<!-- ARCHIVO DE DATOS EXTERNO -->
-<!-- Si tienes albumData.js, colócalo en el mismo directorio. Si existe window.albumData, se priorizará. -->
+<!-- DATA REAL DEL ÁLBUM: albumData.js debe estar en la misma carpeta que index.html -->
 <script src="albumData.js"></script>
 
 <div class="app-container" id="app-container">
@@ -319,7 +319,7 @@
         </svg>
         <h2>Sticker Cup 2026</h2>
         <div class="loader-bar-bg"><div class="loader-bar-fill" id="loader-fill"></div></div>
-        <p class="loader-text">Verificando base de datos...</p>
+        <p class="loader-text">Iniciando base de datos...</p>
     </div>
 
     <div id="main-app" class="screen hidden">
@@ -364,8 +364,8 @@
             <!-- VIEW: RÁPIDO -->
             <div id="view-quick" class="view-section">
                 <h3 style="margin-bottom: 10px;">Ingreso Rápido</h3>
-                <p style="color:var(--gray); font-size:0.9rem; margin-bottom:15px;">Ideal si tenés una pila de figuritas. Separalas por comas. Ej: ARG01, MEX15, FWC-1</p>
-                <textarea id="quick-input" class="textarea-input" placeholder="ARG01, MEX02..."></textarea>
+                <p style="color:var(--gray); font-size:0.9rem; margin-bottom:15px;">Ideal si tenés una pila de figuritas. Separalas por comas. Ej: ARG-1, MEX-15, FWC-1</p>
+                <textarea id="quick-input" class="textarea-input" placeholder="ARG-1, MEX-2, FWC-1..."></textarea>
                 <div class="action-grid">
                     <button class="btn-primary" onclick="app.processQuickAdd('tengo')" style="margin-bottom:0;">Marcar "La tengo"</button>
                     <button class="btn-secondary" onclick="app.processQuickAdd('repetida')" style="margin-bottom:0; border-color:var(--orange); color:var(--orange);">+ Repetidas</button>
@@ -410,8 +410,8 @@
                 <button class="btn-secondary btn-danger" onclick="app.resetProgress()" style="margin-top: 20px;">⚠️ Resetear Progreso</button>
 
                 <div class="footer-legal">
-                    Sticker Cup 2026 v4.0<br>
-                    Tracker seguro y offline. Los datos del álbum se cargan de archivo seguro y tu progreso se guarda localmente en el dispositivo.
+                    Sticker Cup 2026 v7.0 (CSV real)<br>
+                    Tracker con data real desde albumData.js. Tu progreso se guarda localmente en tu navegador.
                 </div>
             </div>
         </div>
@@ -424,7 +424,7 @@
             <div class="nav-item" onclick="app.switchView('settings')" id="nav-settings"><svg viewBox="0 0 24 24"><path d="M19.14,12.94c0.04-0.3,0.06-0.61,0.06-0.94c0-0.32-0.02-0.64-0.06-0.94l2.03-1.58c0.18-0.14,0.23-0.41,0.12-0.61 l-1.92-3.32c-0.12-0.22-0.37-0.29-0.59-0.22l-2.39,0.96c-0.5-0.38-1.03-0.7-1.62-0.94L14.4,2.81c-0.04-0.24-0.24-0.41-0.48-0.41 h-3.84c-0.24,0-0.43,0.17-0.47,0.41L9.25,5.35C8.66,5.59,8.12,5.92,7.63,6.29L5.24,5.33c-0.22-0.08-0.47,0-0.59,0.22L2.73,8.87 C2.62,9.08,2.66,9.34,2.86,9.48l2.03,1.58C4.84,11.36,4.8,11.69,4.8,12s0.02,0.64,0.06,0.94l-2.03,1.58 c-0.18,0.14-0.23,0.41-0.12,0.61l1.92,3.32c0.12,0.22,0.37,0.29,0.59,0.22l2.39-0.96c0.5,0.38,1.03,0.7,1.62,0.94l0.36,2.54 c0.05,0.24,0.24,0.41,0.48,0.41h3.84c0.24,0,0.43-0.17,0.47-0.41l0.36-2.54c0.59-0.24,1.13-0.56,1.62-0.94l2.39,0.96 c0.22,0.08,0.47,0,0.59-0.22l1.92-3.32c0.12-0.22,0.07-0.49-0.12-0.61L19.14,12.94z M12,15.6c-1.98,0-3.6-1.62-3.6-3.6 s1.62-3.6,3.6-3.6s3.6,1.62,3.6,3.6S13.98,15.6,12,15.6z"/></svg><span>Ajustes</span></div>
         </nav>
 
-        <!-- MODAL AVANZADO (Long Press) -->
+        <!-- MODAL AVANZADO (Menú) -->
         <div class="modal-overlay" id="action-modal" onclick="if(event.target===this) app.closeModal()">
             <div class="modal-content">
                 <div class="modal-header">
@@ -438,12 +438,20 @@
                     </div>
                 </div>
                 <div class="modal-actions">
+                    <button class="btn-action add" onclick="app.menuChangeDuplicate(1)">
+                        <svg viewBox="0 0 24 24" width="20" fill="currentColor"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+                        Sumar repetida
+                    </button>
+                    <button class="btn-action" onclick="app.menuChangeDuplicate(-1)">
+                        <svg viewBox="0 0 24 24" width="20" fill="currentColor"><path d="M19 13H5v-2h14v2z"/></svg>
+                        Restar repetida
+                    </button>
                     <button class="btn-action res" onclick="app.menuToggleReserved()">
                         <svg viewBox="0 0 24 24" width="20" fill="currentColor"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zM9 6c0-1.66 1.34-3 3-3s3 1.34 3 3v2H9V6zm9 14H6V10h12v10zm-6-3c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z"/></svg>
-                        Reservar / Quitar
+                        Reservar / Quitar reserva
                     </button>
-                    <button class="btn-action add" onclick="app.menuChangeDuplicate(-1)">
-                        Restar repetida
+                    <button class="btn-action del" onclick="app.menuRevertMissing()">
+                        Volver a "Me falta"
                     </button>
                 </div>
             </div>
@@ -464,6 +472,7 @@ const app = {
         user: {}, // Solo progreso del usuario
         settings: { sound: true, vibration: true, animations: true }
     },
+    openSections: new Set(), // Registro para no cerrar los países
     currentFilter: 'all', currentSearch: '', selectedStickerId: null, audioCtx: null,
     touchTimer: null, isLongPress: false,
     keys: { user: 'stickerCup2026_state_v1', settings: 'stickerCup2026_settings_v1' },
@@ -481,8 +490,11 @@ const app = {
                 clearInterval(interval);
                 setTimeout(() => {
                     document.getElementById('loading-screen').classList.add('hidden');
-                    document.getElementById('main-app').classList.remove('hidden');
-                    this.startApp();
+                    // Solo iniciamos la app si se logró cargar la base de datos
+                    if (this.state.albumData.length > 0) {
+                        document.getElementById('main-app').classList.remove('hidden');
+                        this.startApp();
+                    }
                 }, 200);
             }
         }, 80);
@@ -496,65 +508,20 @@ const app = {
     },
 
     // =========================================
-    // INICIALIZACIÓN DE DATOS
+    // INICIALIZACIÓN DE DATOS (AHORA INLINE)
     // =========================================
     initData() {
-        // Priorizar base de datos externa cargada mediante script (albumData.js)
-        if (typeof window.albumData !== 'undefined' && Array.isArray(window.albumData)) {
-            // Aplanar si viene agrupada, o asignar directo si ya es lista de figuritas.
-            this.state.albumData = window.albumData[0].stickers ? window.albumData.flatMap(g => g.stickers) : window.albumData;
-            console.log("Stickers cargados desde archivo externo.");
+        if (typeof window.albumData !== 'undefined' && Array.isArray(window.albumData) && window.albumData.length > 0) {
+            this.state.albumData = window.albumData[0].stickers
+                ? window.albumData.flatMap(g => g.stickers)
+                : window.albumData;
+
+            console.log(`✅ ${this.state.albumData.length} figuritas reales cargadas desde albumData.js`);
             return;
         }
-        
-        // Fallback exacto embebido si albumData.js no existe, usando tu nomenclatura exacta (ARG01, MEX15).
-        console.log("No se detectó albumData.js, cargando fallback exacto interno.");
-        const data = [];
-        data.push({ id: '00', code: '00', number: 0, prefix: '00', section: '⭐ Especiales & Oficial', name: 'Panini Logo', type: 'special' });
-        
-        const fwcNames = ["Official Emblem", "Official Emblem (Abajo)", "Mascotas", "Slogan", "Pelota", "Canadá - Sede", "México - Sede", "USA - Sede", "Italia 1934", "Brasil 1950", "Alemania 1954", "Chile 1962", "Alemania 1974"];
-        for(let i=1; i<=13; i++) {
-            data.push({ id: `FWC-${i}`, code: `FWC-${i}`, number: i, prefix: 'FWC', section: '⭐ Especiales & Oficial', name: fwcNames[i-1], type: 'special' });
-        }
 
-        const teams = [
-            {p: 'ARG', n: 'Argentina', f: '🇦🇷'}, {p: 'AUS', n: 'Australia', f: '🇦🇺'}, {p: 'AUT', n: 'Austria', f: '🇦🇹'},
-            {p: 'BEL', n: 'Bélgica', f: '🇧🇪'}, {p: 'BOL', n: 'Bolivia', f: '🇧🇴'}, {p: 'BRA', n: 'Brasil', f: '🇧🇷'},
-            {p: 'CAN', n: 'Canadá', f: '🇨🇦'}, {p: 'CHI', n: 'Chile', f: '🇨🇱'}, {p: 'CMR', n: 'Camerún', f: '🇨🇲'},
-            {p: 'COL', n: 'Colombia', f: '🇨🇴'}, {p: 'CRC', n: 'Costa Rica', f: '🇨🇷'}, {p: 'CRO', n: 'Croacia', f: '🇭🇷'},
-            {p: 'DEN', n: 'Dinamarca', f: '🇩🇰'}, {p: 'ECU', n: 'Ecuador', f: '🇪🇨'}, {p: 'EGY', n: 'Egipto', f: '🇪🇬'},
-            {p: 'ENG', n: 'Inglaterra', f: '🏴󠁧󠁢󠁥󠁮󠁧󠁿'}, {p: 'ESP', n: 'España', f: '🇪🇸'}, {p: 'FRA', n: 'Francia', f: '🇫🇷'},
-            {p: 'GER', n: 'Alemania', f: '🇩🇪'}, {p: 'GHA', n: 'Ghana', f: '🇬🇭'}, {p: 'IRN', n: 'Irán', f: '🇮🇷'},
-            {p: 'ITA', n: 'Italia', f: '🇮🇹'}, {p: 'JAM', n: 'Jamaica', f: '🇯🇲'}, {p: 'JPN', n: 'Japón', f: '🇯🇵'},
-            {p: 'KOR', n: 'Corea del Sur', f: '🇰🇷'}, {p: 'KSA', n: 'Arabia Saudita', f: '🇸🇦'}, {p: 'MAR', n: 'Marruecos', f: '🇲🇦'},
-            {p: 'MEX', n: 'México', f: '🇲🇽'}, {p: 'NED', n: 'Países Bajos', f: '🇳🇱'}, {p: 'NGA', n: 'Nigeria', f: '🇳🇬'},
-            {p: 'NOR', n: 'Noruega', f: '🇳🇴'}, {p: 'NZL', n: 'Nueva Zelanda', f: '🇳🇿'}, {p: 'PAN', n: 'Panamá', f: '🇵🇦'},
-            {p: 'PAR', n: 'Paraguay', f: '🇵🇾'}, {p: 'PER', n: 'Perú', f: '🇵🇪'}, {p: 'POL', n: 'Polonia', f: '🇵🇱'},
-            {p: 'POR', n: 'Portugal', f: '🇵🇹'}, {p: 'QAT', n: 'Qatar', f: '🇶🇦'}, {p: 'SEN', n: 'Senegal', f: '🇸🇳'},
-            {p: 'SRB', n: 'Serbia', f: '🇷🇸'}, {p: 'SUI', n: 'Suiza', f: '🇨🇭'}, {p: 'SWE', n: 'Suecia', f: '🇸🇪'},
-            {p: 'TUN', n: 'Túnez', f: '🇹🇳'}, {p: 'TUR', n: 'Turquía', f: '🇹🇷'}, {p: 'URU', n: 'Uruguay', f: '🇺🇾'},
-            {p: 'USA', n: 'Estados Unidos', f: '🇺🇸'}, {p: 'VEN', n: 'Venezuela', f: '🇻🇪'}, {p: 'WAL', n: 'Gales', f: '🏴󠁧󠁢󠁷󠁬󠁳󠁿'}
-        ];
-
-        teams.sort((a,b) => a.n.localeCompare(b.n));
-
-        teams.forEach(t => {
-            for(let i=1; i<=20; i++) {
-                let formattedNum = i.toString().padStart(2, '0'); // ARG01 format
-                let name = i === 1 ? `Escudo ${t.n}` : (i === 13 ? `Formación` : `Jugador ${i}`);
-                data.push({
-                    id: `${t.p}${formattedNum}`, code: `${t.p}${formattedNum}`, number: i, prefix: t.p,
-                    section: `${t.f} ${t.n}`, name: name, type: 'team'
-                });
-            }
-        });
-
-        const ccNames = ["Lamine Yamal", "Joshua Kimmich", "Harry Kane", "Santiago Giménez", "Joško Gvardiol", "Jude Bellingham", "Vinícius Jr", "Lionel Messi", "Kylian Mbappé", "Kevin De Bruyne", "Phil Foden", "Rodri", "Alphonso Davies", "Christian Pulisic", "Emiliano Martínez", "Federico Valverde", "Rafael Leão", "Bukayo Saka", "Florian Wirtz", "Jamal Musiala"];
-        for(let i=1; i<=20; i++) {
-            data.push({ id: `CC-${i}`, code: `CC-${i}`, number: i, prefix: 'CC', section: '⭐ Leyendas / CC', name: ccNames[i-1] || `Leyenda ${i}`, type: 'special' });
-        }
-
-        this.state.albumData = data;
+        alert("No se encontró albumData.js o está vacío. Subí albumData.js en la misma carpeta que index.html.");
+        this.state.albumData = [];
     },
 
     loadUserProgress() {
@@ -586,7 +553,7 @@ const app = {
     },
 
     // =========================================
-    // RENDERING DE VISTAS (Protegido y Seguro)
+    // RENDERING DE VISTAS
     // =========================================
     switchView(viewId) {
         document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
@@ -610,7 +577,18 @@ const app = {
         this.renderAlbum();
     },
 
+    toggleSection(sectionName, element) {
+        element.classList.toggle('open');
+        if (element.classList.contains('open')) {
+            this.openSections.add(sectionName);
+        } else {
+            this.openSections.delete(sectionName);
+        }
+    },
+
     renderAlbum() {
+        if (this.state.albumData.length === 0) return;
+
         const container = document.getElementById('album-container');
         container.innerHTML = '';
         let hasResults = false;
@@ -633,7 +611,6 @@ const app = {
 
             if (this.currentSearch) {
                 const term = this.currentSearch;
-                // Búsqueda extendida a múltiples propiedades
                 const fullText = `${st.code} ${st.name} ${st.section} ${st.prefix} ${st.number}`.toLowerCase();
                 if (!fullText.includes(term)) return;
             }
@@ -651,7 +628,10 @@ const app = {
             
             const gDiv = document.createElement('div');
             gDiv.className = 'section-group';
-            if (this.currentSearch || this.currentFilter !== 'all') gDiv.classList.add('open');
+            
+            if (this.currentSearch || this.currentFilter !== 'all' || this.openSections.has(sectionName)) {
+                gDiv.classList.add('open');
+            }
 
             let stHtml = '';
             stickers.forEach(st => {
@@ -664,7 +644,6 @@ const app = {
                 if (u.reserved) classes.push('reservada');
                 if (st.type === 'special') classes.push('special');
 
-                // Botón Plus Exclusivo (solo se muestra si la tengo)
                 let plusBtnHTML = u.owned 
                     ? `<button class="btn-plus-dup" onclick="event.stopPropagation(); app.addDuplicate('${escapeHTML(st.id)}')">+</button>` 
                     : '';
@@ -692,7 +671,7 @@ const app = {
             });
 
             gDiv.innerHTML = `
-                <div class="section-header" onclick="this.parentElement.classList.toggle('open')">
+                <div class="section-header" onclick="app.toggleSection('${escapeHTML(sectionName)}', this.parentElement)">
                     <div class="section-title">${escapeHTML(sectionName)}</div>
                     <div class="section-stats">
                         <span>${real.owned}/${real.total}</span>
@@ -713,7 +692,6 @@ const app = {
 
         let tengo = 0, repetidas = 0, reservadas = 0;
         
-        // El dashboard SOLO cuenta figuritas que existen en el álbum (evita basuras viejas del user)
         this.state.albumData.forEach(st => {
             const u = this.state.user[st.id];
             if (u) {
@@ -740,7 +718,7 @@ const app = {
     },
 
     // =========================================
-    // FLUJO UX DE INTERACCIÓN (TAP)
+    // FLUJO UX DE INTERACCIÓN (TAP SEGURO)
     // =========================================
     handleCardTap(id, element) {
         if (this.isLongPress) { this.isLongPress = false; return; }
@@ -748,19 +726,15 @@ const app = {
         let u = this.getUserObj(id);
 
         if (u.owned) {
-            // Toggle a "Me falta"
-            u.owned = false;
-            u.duplicates = 0; // Se resetean si ya no la tiene
+            this.openMiniMenu(id);
         } else {
-            // Toggle a "La tengo"
             u.owned = true;
+            u.updatedAt = new Date().toISOString();
+            this.saveUser();
             this.playVibration(20);
             this.playSound('tengo');
+            this.renderAlbum();
         }
-
-        u.updatedAt = new Date().toISOString();
-        this.saveUser();
-        this.renderAlbum();
     },
 
     addDuplicate(id) {
@@ -843,22 +817,53 @@ const app = {
         this.renderAlbum();
     },
 
+    menuRevertMissing() {
+        if (!this.selectedStickerId) return;
+        let u = this.getUserObj(this.selectedStickerId);
+        u.owned = false;
+        u.duplicates = 0;
+        u.reserved = false;
+        u.updatedAt = new Date().toISOString();
+        this.saveUser();
+        this.playSound('click');
+        this.closeModal();
+        this.renderAlbum();
+    },
+
     // =========================================
     // LISTAS Y MODO RÁPIDO
     // =========================================
     normalizeInputCode(input) {
-        let upper = input.toUpperCase().replace(/\s+/g, '');
-        // Normaliza "ARG1", "ARG-1" a "ARG01", pero preserva FWC-1 y CC-10
-        let match = upper.match(/^([A-Z]+)-?(\d+)$/);
-        if (match) {
-            let prefix = match[1];
-            let num = parseInt(match[2], 10);
-            if (['FWC', 'CC'].includes(prefix)) {
-                return `${prefix}-${num}`;
-            } else {
-                return `${prefix}${num.toString().padStart(2, '0')}`;
+        const upper = String(input).toUpperCase().replace(/\s+/g, '');
+        if (!upper) return upper;
+
+        // Si existe exactamente como código real del CSV, usarlo tal cual.
+        if (this.state.albumData.some(s => String(s.code).toUpperCase() === upper || String(s.id).toUpperCase() === upper)) {
+            return upper;
+        }
+
+        // Aceptar MEX15 / ARG01 y convertir a MEX-15 / ARG-1 si existe en la base.
+        let noHyphen = upper.match(/^([A-Z]+)(\d+)$/);
+        if (noHyphen) {
+            const prefix = noHyphen[1];
+            const num = parseInt(noHyphen[2], 10);
+            const candidate = `${prefix}-${num}`;
+            if (this.state.albumData.some(s => String(s.code).toUpperCase() === candidate)) {
+                return candidate;
             }
         }
+
+        // Aceptar MEX-01 y convertir a MEX-1 si existe.
+        let withHyphen = upper.match(/^([A-Z]+)-(\d+)$/);
+        if (withHyphen) {
+            const prefix = withHyphen[1];
+            const num = parseInt(withHyphen[2], 10);
+            const candidate = `${prefix}-${num}`;
+            if (this.state.albumData.some(s => String(s.code).toUpperCase() === candidate)) {
+                return candidate;
+            }
+        }
+
         return upper;
     },
 
@@ -1060,7 +1065,7 @@ const app = {
         const manifestBlob = new Blob([JSON.stringify(manifestData)], {type: 'application/json'});
         document.getElementById('manifest-link').href = URL.createObjectURL(manifestBlob);
 
-        // Registro de Service Worker solo en contexto seguro (evita errores en archivo local file://)
+        // Registro de Service Worker solo en contexto seguro
         if ('serviceWorker' in navigator && location.protocol !== 'file:') {
             navigator.serviceWorker.register('./service-worker.js').catch(err => console.log('Info: SW omitido (requiere server).'));
         }
